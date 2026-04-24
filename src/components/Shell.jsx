@@ -85,7 +85,7 @@ export const CravingLogModal = ({ open, onClose }) => {
   );
 };
 
-export const Sidebar = ({ activePage, onNavigate }) => {
+export const Sidebar = ({ activePage, onNavigate, onLogout }) => {
   const [modalOpen, setModalOpen] = React.useState(false);
   return (
     <>
@@ -127,7 +127,7 @@ export const Sidebar = ({ activePage, onNavigate }) => {
             background: activePage === 'config' ? 'var(--color-primary-light)' : 'transparent',
             color: activePage === 'config' ? 'var(--color-primary-dark)' : 'var(--color-text-secondary)',
           }}><Icon name="Settings" size={18} color={activePage === 'config' ? 'var(--color-primary)' : '#999'} />Configurações</button>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, background: 'transparent', color: 'var(--color-text-secondary)' }}>
+          <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, background: 'transparent', color: 'var(--color-text-secondary)' }}>
             <Icon name="LogOut" size={18} color="#999" />Sair
           </button>
         </div>
@@ -149,9 +149,9 @@ const TopBar = () => (
   </div>
 );
 
-export const AppShell = ({ activePage, onNavigate, children }) => (
+export const AppShell = ({ activePage, onNavigate, onLogout, children }) => (
   <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--color-surface)' }}>
-    <Sidebar activePage={activePage} onNavigate={onNavigate} />
+    <Sidebar activePage={activePage} onNavigate={onNavigate} onLogout={onLogout} />
     <main style={{ flex: 1, marginLeft: 220, padding: '0 40px 40px', maxWidth: 960, minWidth: 0 }}>
       <TopBar />
       {children}

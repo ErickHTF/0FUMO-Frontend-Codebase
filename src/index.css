@@ -57,3 +57,36 @@ input, textarea, button, select {
   background: #9ca3af;
 }
 
+@keyframes landingFade {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-fade {
+  animation: landingFade 0.8s ease both;
+}
+
+.landing-stagger-1 {
+  animation-delay: 0.05s;
+}
+
+.landing-stagger-2 {
+  animation-delay: 0.15s;
+}
+
+.landing-stagger-3 {
+  animation-delay: 0.25s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-fade {
+    animation: none;
+  }
+}
+

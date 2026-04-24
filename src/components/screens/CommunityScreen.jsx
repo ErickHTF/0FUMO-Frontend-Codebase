@@ -19,7 +19,7 @@ export const CommunityScreen = () => {
 
   return (
     <>
-      <PageTitle title="Community" subtitle="Together we are stronger. Celebrate victories and find your safe space." />
+      <PageTitle title="Comunidade" subtitle="Juntos somos mais fortes. Celebre vitórias e encontre seu espaço seguro." />
       <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: '#F5F6F8', borderRadius: 10, padding: 4 }}>
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)} style={{

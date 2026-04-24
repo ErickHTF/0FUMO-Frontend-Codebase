@@ -7,7 +7,7 @@ export const DashboardScreen = () => {
   const money = 245, cigs = 124;
   return (
     <>
-      <PageTitle title="Olá, João" subtitle="Um dia de cada vez. Você está indo muito bem." />
+      <PageTitle title="Olá, Bob" subtitle="Um dia de cada vez. Você está indo muito bem." />
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 24 }}>
         {/* Progress card */}
         <Card style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
