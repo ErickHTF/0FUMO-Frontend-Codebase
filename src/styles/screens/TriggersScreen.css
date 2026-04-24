@@ -1,0 +1,168 @@
+/* ── Header row ───────────────────────────────────────── */
+.triggers__header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.triggers__new-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+/* ── Insight card ─────────────────────────────────────── */
+.triggers__insight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.triggers__insight-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.triggers__insight-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.triggers__insight-sub {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.triggers__insight-pct {
+  margin-left: auto;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* ── Filters ──────────────────────────────────────────── */
+.triggers__filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.triggers__filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #E5E7EB;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.triggers__filter-toggle--active {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.triggers__filter-toggle--inactive {
+  background: #fff;
+  color: var(--color-text-secondary);
+}
+
+.triggers__select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1.5px solid #E5E7EB;
+  font-size: 13px;
+  font-family: inherit;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* ── Entries grid ─────────────────────────────────────── */
+.triggers__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* ── Entry card ───────────────────────────────────────── */
+.trigger-entry__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.trigger-entry__date {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trigger-entry__dots {
+  display: flex;
+  gap: 3px;
+}
+
+.trigger-entry__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.trigger-entry__dot--filled  { background: var(--dot-color, #999); }
+.trigger-entry__dot--empty   { background: #E5E7EB; }
+
+.trigger-entry__title {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+/* The card sets --type-color; child elements inherit it */
+.trigger-entry-card {
+  border-left: 3px solid var(--type-color, #999);
+}
+
+.trigger-entry__type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #F5F6F8;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--type-color, #999);
+}
+
+.trigger-entry__note {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 10px 0 0;
+  line-height: 1.5;
+}

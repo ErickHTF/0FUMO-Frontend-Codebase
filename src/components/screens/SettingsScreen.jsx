@@ -1,18 +1,14 @@
 import React from 'react';
 import { Icon } from '../../lib/icons';
 import { Card, PageTitle } from '../ui/Card';
+import '../../styles/screens/SettingsScreen.css';
 
 const Toggle = ({ checked, onChange }) => (
-  <button onClick={() => onChange(!checked)} style={{
-    width: 48, height: 28, borderRadius: 14, border: 'none', cursor: 'pointer',
-    background: checked ? 'var(--color-primary)' : '#DCDFE4', position: 'relative',
-    transition: 'background 0.2s', padding: 0,
-  }}>
-    <div style={{
-      width: 24, height: 24, borderRadius: '50%', background: '#fff',
-      position: 'absolute', top: 2, left: checked ? 22 : 2, transition: 'left 0.2s',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    }} />
+  <button
+    onClick={() => onChange(!checked)}
+    className={`toggle ${checked ? 'toggle--on' : 'toggle--off'}`}
+  >
+    <div className={`toggle__thumb ${checked ? 'toggle__thumb--on' : 'toggle__thumb--off'}`} />
   </button>
 );
 
@@ -39,71 +35,58 @@ export const SettingsScreen = () => {
   };
 
   return (
-    <div style={{ display: 'flex', gap: 24 }}>
-      <aside style={{ width: 200, minHeight: '100%' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <button onClick={() => setTab('privacidade')} style={{
-            display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderRadius: 8,
-            border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14,
-            background: tab === 'privacidade' ? 'var(--color-primary-light)' : 'transparent',
-            color: tab === 'privacidade' ? 'var(--color-primary-dark)' : 'var(--color-text-secondary)',
-          }}>
-            <Icon name="Lock" size={18} color={tab === 'privacidade' ? 'var(--color-primary)' : '#999'} />
-            Privacidade
-          </button>
-          <button onClick={() => setTab('notificacoes')} style={{
-            display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderRadius: 8,
-            border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14,
-            background: tab === 'notificacoes' ? 'var(--color-primary-light)' : 'transparent',
-            color: tab === 'notificacoes' ? 'var(--color-primary-dark)' : 'var(--color-text-secondary)',
-          }}>
-            <Icon name="Bell" size={18} color={tab === 'notificacoes' ? 'var(--color-primary)' : '#999'} />
-            Notificações
-          </button>
-          <button onClick={() => setTab('conta')} style={{
-            display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderRadius: 8,
-            border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14,
-            background: tab === 'conta' ? 'var(--color-primary-light)' : 'transparent',
-            color: tab === 'conta' ? 'var(--color-primary-dark)' : 'var(--color-text-secondary)',
-          }}>
-            <Icon name="User" size={18} color={tab === 'conta' ? 'var(--color-primary)' : '#999'} />
-            Conta
-          </button>
+    <div className="settings">
+      <aside className="settings__sidebar">
+        <div className="settings__nav">
+          {[
+            { id: 'privacidade', label: 'Privacidade', icon: 'Lock' },
+            { id: 'notificacoes', label: 'Notificações', icon: 'Bell' },
+            { id: 'conta', label: 'Conta', icon: 'User' },
+          ].map(item => (
+            <button
+              key={item.id}
+              onClick={() => setTab(item.id)}
+              className={`settings__nav-btn${tab === item.id ? ' settings__nav-btn--active' : ''}`}
+            >
+              <Icon name={item.icon} size={18} color={tab === item.id ? 'var(--color-primary)' : '#999'} />
+              {item.label}
+            </button>
+          ))}
         </div>
       </aside>
 
-      <div style={{ flex: 1 }}>
+      <div className="settings__content">
         {tab === 'privacidade' && (
           <div>
-            <div style={{ marginBottom: 32 }}>
+            <div className="settings__section">
               <Card>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div className="setting-row">
+                  <div className="setting-row__left">
                     <Icon name="Eye" size={20} color="var(--color-primary)" />
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Modo Anônimo</h4>
-                      <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--color-text-secondary)' }}>Participe da comunidade sem revelar sua identidade real.</p>
+                    <div className="setting-row__info">
+                      <h4>Modo Anônimo</h4>
+                      <p>Participe da comunidade sem revelar sua identidade real.</p>
                     </div>
                   </div>
                   <Toggle checked={settings.modoAnonimo} onChange={() => updateSetting('modoAnonimo', !settings.modoAnonimo)} />
                 </div>
                 {settings.modoAnonimo && (
-                  <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #ECEEF1' }}>
-                    <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: 8 }}>Seu apelido visível</label>
-                    <div style={{ padding: '12px 16px', borderRadius: 8, background: '#F5F6F8', fontSize: 14, fontWeight: 500 }}>BuscadorDePaz_99</div>
+                  <div className="anon-section">
+                    <label className="anon-section__label">Seu apelido visível</label>
+                    <div className="anon-section__value">BuscadorDePaz_99</div>
                   </div>
                 )}
               </Card>
             </div>
 
-            <div style={{ marginBottom: 32 }}>
+            <div className="settings__section">
               <Card>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div className="setting-row">
+                  <div className="setting-row__left">
                     <Icon name="Lock" size={20} color="var(--color-primary)" />
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Diário Privado</h4>
-                      <p style={{ margin: '4px 0 0', fontSize: 13, color: 'var(--color-text-secondary)' }}>Seus registros de sentimentos e gatilhos são criptografados e visíveis apenas para você.</p>
+                    <div className="setting-row__info">
+                      <h4>Diário Privado</h4>
+                      <p>Seus registros de sentimentos e gatilhos são criptografados e visíveis apenas para você.</p>
                     </div>
                   </div>
                   <Toggle checked={settings.diarioPrivado} onChange={() => updateSetting('diarioPrivado', !settings.diarioPrivado)} />
@@ -113,36 +96,23 @@ export const SettingsScreen = () => {
 
             <div>
               <Card>
-                <div style={{ marginBottom: 20 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                    <Icon name="Users" size={20} color="var(--color-primary)" />
-                    <h4 style={{ margin: 0, fontSize: 16, fontWeight: 600 }}>Buddy System</h4>
-                  </div>
-                  <p style={{ margin: '0 0 16px', fontSize: 13, color: 'var(--color-text-secondary)' }}>Gerencie quem pode receber alertas de SOS quando você estiver enfrentando uma fissura forte.</p>
+                <div className="buddy__header">
+                  <Icon name="Users" size={20} color="var(--color-primary)" />
+                  <h4 className="buddy__title">Buddy System</h4>
                 </div>
-
+                <p className="buddy__desc">Gerencie quem pode receber alertas de SOS quando você estiver enfrentando uma fissura forte.</p>
                 {guardians.map(guardian => (
-                  <div key={guardian.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid #ECEEF1' }}>
-                    <div style={{
-                      width: 40, height: 40, borderRadius: '50%', background: guardian.color, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 14, fontWeight: 600, color: '#fff',
-                    }}>
+                  <div key={guardian.id} className="buddy__row">
+                    <div className="buddy__avatar" style={{ '--avatar-color': guardian.color }}>
                       {guardian.avatar}
                     </div>
-                    <span style={{ flex: 1, fontSize: 14, fontWeight: 500 }}>{guardian.name}</span>
-                    <button onClick={() => removeGuardian(guardian.id)} style={{
-                      background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px',
-                    }}>
+                    <span className="buddy__name">{guardian.name}</span>
+                    <button onClick={() => removeGuardian(guardian.id)} className="buddy__remove-btn">
                       <Icon name="X" size={18} color="#999" />
                     </button>
                   </div>
                 ))}
-
-                <button style={{
-                  marginTop: 16, padding: '12px 16px', borderRadius: 8, border: '2px dashed #ECEEF1',
-                  background: 'none', cursor: 'pointer', color: 'var(--color-text-secondary)', fontSize: 14,
-                  display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'inherit', fontWeight: 500,
-                }}>
+                <button className="buddy__add-btn">
                   <Icon name="UserPlus" size={16} color="var(--color-primary)" />
                   Adicionar Guardião
                 </button>
@@ -153,24 +123,19 @@ export const SettingsScreen = () => {
 
         {tab === 'notificacoes' && (
           <div>
-            <Card style={{ marginBottom: 24 }}>
-              <h3 style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 600 }}>Notificações</h3>
-              <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                paddingBottom: 16, borderBottom: '1px solid #ECEEF1', marginBottom: 16,
-              }}>
+            <Card className="card--mb-24">
+              <h3 className="account__section-title">Notificações</h3>
+              <div className="notif-row notif-row--border">
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Ativar notificações</div>
-                  <div style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>Receba lembretes e motivação</div>
+                  <div className="notif-row__title">Ativar notificações</div>
+                  <div className="notif-row__sub">Receba lembretes e motivação</div>
                 </div>
                 <Toggle checked={settings.notificacoes} onChange={() => updateSetting('notificacoes', !settings.notificacoes)} />
               </div>
-              <div style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              }}>
+              <div className="notif-row">
                 <div>
-                  <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Som nas notificações</div>
-                  <div style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}>Toque sonoro ao receber alertas</div>
+                  <div className="notif-row__title">Som nas notificações</div>
+                  <div className="notif-row__sub">Toque sonoro ao receber alertas</div>
                 </div>
                 <Toggle checked={settings.som} onChange={() => updateSetting('som', !settings.som)} />
               </div>
@@ -180,38 +145,26 @@ export const SettingsScreen = () => {
 
         {tab === 'conta' && (
           <div>
-            <Card style={{ marginBottom: 24 }}>
-              <h3 style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 600 }}>Informações da Conta</h3>
-              <button style={{
-                display: 'flex', alignItems: 'center', gap: 12, width: '100%',
-                padding: '12px 0', border: 'none', background: 'none', cursor: 'pointer',
-                fontSize: 14, color: 'var(--color-text-primary)', textAlign: 'left',
-              }}>
+            <Card className="card--mb-24">
+              <h3 className="account__section-title">Informações da Conta</h3>
+              <button className="account__email-btn">
                 <Icon name="Mail" size={18} color="var(--color-text-secondary)" />
                 <div>
-                  <div style={{ fontWeight: 500 }}>Email</div>
-                  <div style={{ fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 2 }}>usuario@example.com</div>
+                  <div className="account__email-label">Email</div>
+                  <div className="account__email-value">usuario@example.com</div>
                 </div>
               </button>
             </Card>
 
-            <Card style={{ marginBottom: 24 }}>
-              <h3 style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 600 }}>Seus Dados</h3>
-              <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', marginBottom: 16 }}>Faça download do seu histórico ou solicite a exclusão permanente.</p>
-              <div style={{ display: 'flex', gap: 12 }}>
-                <button style={{
-                  display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 8,
-                  border: '1.5px solid #ECEEF1', background: '#fff', cursor: 'pointer', fontSize: 14,
-                  fontWeight: 500, color: 'var(--color-text-primary)', fontFamily: 'inherit',
-                }}>
+            <Card className="card--mb-24">
+              <h3 className="account__section-title">Seus Dados</h3>
+              <p className="account__data-desc">Faça download do seu histórico ou solicite a exclusão permanente.</p>
+              <div className="account__actions">
+                <button className="account__export-btn">
                   <Icon name="Download" size={16} color="var(--color-text-secondary)" />
                   Exportar
                 </button>
-                <button style={{
-                  display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 8,
-                  border: 'none', background: '#FEE2E2', cursor: 'pointer', fontSize: 14,
-                  fontWeight: 500, color: '#DC2626', fontFamily: 'inherit',
-                }}>
+                <button className="account__delete-btn">
                   <Icon name="Trash2" size={16} color="#DC2626" />
                   Excluir Conta
                 </button>

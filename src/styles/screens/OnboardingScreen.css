@@ -1,0 +1,246 @@
+/* ── Layout ───────────────────────────────────────────── */
+.onboarding {
+  max-width: 560px;
+  margin: 0 auto;
+  padding-top: 40px;
+}
+
+.onboarding__brand {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.onboarding__brand-name {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 8px;
+}
+
+.onboarding__brand-sub {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+}
+
+/* ── Steps indicator ──────────────────────────────────── */
+.onboarding__steps {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.onboarding__step-dot {
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.onboarding__step-dot--active   { background: var(--color-primary); }
+.onboarding__step-dot--inactive { background: #E5E7EB; }
+
+/* ── Card content ─────────────────────────────────────── */
+.onboarding__card-title {
+  font-size: 22px;
+  margin: 0 0 8px;
+  text-align: center;
+}
+
+.onboarding__card-sub {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  margin: 0 0 32px;
+}
+
+/* ── Fields ───────────────────────────────────────────── */
+.onboarding__field-label {
+  font-size: 15px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.onboarding__input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1.5px solid #E5E7EB;
+  font-size: 15px;
+  font-family: inherit;
+  box-sizing: border-box;
+  margin-bottom: 32px;
+}
+
+/* ── Time picker ──────────────────────────────────────── */
+.onboarding__time-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.onboarding__time-btn {
+  flex: 1;
+  padding: 12px 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.onboarding__time-btn--active {
+  border: 1.5px solid var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.onboarding__time-btn--inactive {
+  border: 1.5px solid #E5E7EB;
+  background: #fff;
+  color: var(--color-text-primary);
+}
+
+/* ── Motivos grid ─────────────────────────────────────── */
+.onboarding__motivos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.onboarding__motivo-btn {
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-family: inherit;
+}
+
+.onboarding__motivo-btn--active {
+  border: 1.5px solid var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.onboarding__motivo-btn--inactive {
+  border: 1.5px solid #E5E7EB;
+  background: #fff;
+}
+
+.onboarding__motivo-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.onboarding__motivo-label--active   { color: var(--color-primary-dark); }
+.onboarding__motivo-label--inactive { color: var(--color-text-primary); }
+
+/* ── Actions ──────────────────────────────────────────── */
+.onboarding__actions {
+  display: flex;
+  gap: 12px;
+}
+
+.onboarding__btn-primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.onboarding__btn-primary--active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.onboarding__btn-primary--disabled {
+  background: #E5E7EB;
+  color: #999;
+  cursor: default;
+}
+
+.onboarding__btn-secondary {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1.5px solid #E5E7EB;
+  background: #fff;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.onboarding__btn-continue {
+  flex: 2;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.onboarding__btn-continue--active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.onboarding__btn-continue--disabled {
+  background: #E5E7EB;
+  color: #999;
+  cursor: default;
+}
+
+/* ── Final step ───────────────────────────────────────── */
+.onboarding__success-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--color-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.onboarding__success-title {
+  font-size: 24px;
+  margin: 0 0 12px;
+}
+
+.onboarding__success-text {
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  margin: 0 0 32px;
+  line-height: 1.6;
+}
+
+.onboarding__start-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 12px rgba(34, 151, 107, 0.3);
+}
+
+.onboarding__privacy-note {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 12px;
+}

@@ -90,3 +90,22 @@ input, textarea, button, select {
   }
 }
 
+/* ── Shared utilities ─────────────────────────────────── */
+.progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: #F0F1F3;
+}
+
+.progress-bar--spaced {
+  margin-bottom: 12px;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  border-radius: 3px;
+  width: var(--progress-width, 0%);
+  transition: width 0.5s;
+  background: var(--progress-color, var(--color-primary));
+}
+

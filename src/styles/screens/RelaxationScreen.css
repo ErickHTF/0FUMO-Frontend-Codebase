@@ -1,0 +1,144 @@
+/* ── Top grid ─────────────────────────────────────────── */
+.relaxation__top-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* ── Breathing card ───────────────────────────────────── */
+.breathing-card {
+  background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+  border: 1px solid rgba(34, 151, 107, 0.1);
+}
+
+.relaxation__card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.relaxation__card-icon--blue {
+  background: #EFF6FF;
+}
+
+.relaxation__card-title {
+  font-size: 22px;
+  margin: 0 0 8px;
+}
+
+.relaxation__card-title--sm {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+.relaxation__card-desc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.relaxation__card-desc--sm {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.relaxation__action-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.relaxation__play-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.relaxation__play-btn--outline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1.5px solid #E5E7EB;
+  background: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.relaxation__duration {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+/* ── Tips card ────────────────────────────────────────── */
+.tips__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.tips__header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tips__title {
+  margin: 0;
+  font-size: 17px;
+}
+
+.tips__see-all {
+  font-size: 13px;
+  color: var(--color-primary);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tips__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.tip-item {
+  padding: 16px;
+  border-radius: 10px;
+  background: #F9FAFB;
+  border: 1px solid #F0F1F3;
+}
+
+.tip-item__title {
+  margin: 10px 0 6px;
+  font-size: 14px;
+}
+
+.tip-item__desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
