@@ -50,11 +50,13 @@ const RITUALS = [
   { id: 'alcohol',     label: 'Consumo de álcool' },
 ];
 
-const MONEY_DESTINATIONS = [
-  { id: 'travel',  label: 'Viagem de férias' },
-  { id: 'gadget',  label: 'Comprar um novo gadget (MacBook, celular, etc.)' },
-  { id: 'gastro',  label: 'Jantares e experiências gastronômicas' },
-  { id: 'invest',  label: 'Investimentos ou reserva de emergência' },
+const REWARD_DREAMS = [
+  { id: 'travel',    label: 'Viajar para algum lugar que sempre quis' },
+  { id: 'family',    label: 'Passar mais tempo de qualidade com quem amo' },
+  { id: 'health',    label: 'Me sentir mais disposto e com mais energia' },
+  { id: 'learn',     label: 'Investir em algo que sempre adiou (curso, hobby)' },
+  { id: 'comfort',   label: 'Comprar algo que você merece há tempo' },
+  { id: 'freedom',   label: 'Simplesmente ser livre disso' },
 ];
 
 const STRESS_COPINGS = [
@@ -73,7 +75,6 @@ const QUIT_ATTEMPTS = [
 ];
 
 const LONGEST_QUIT = [
-  { id: 'never',       label: 'Nunca tentei parar' },
   { id: 'week',        label: 'Menos de 1 semana' },
   { id: 'month',       label: '1 semana a 1 mês' },
   { id: '6months',     label: '1 mês a 6 meses' },
@@ -93,44 +94,20 @@ function getRandomMessage(messages) {
   return messages[Math.floor(Math.random() * messages.length)];
 }
 
-function getToastMessage(nextStep, packCost, moneyDestination) {
+function getToastMessage(nextStep, packCost) {
   if (nextStep === 4) {
     if (packCost === 'r17plus') {
       return 'R$ 17 por maço? Em 1 ano sem fumar você economiza mais de R$ 6.000 — dá pra pagar uma viagem internacional.';
     }
     return 'Cada maço que você não comprar vai direto pro seu bolso. Vamos calcular isso juntos.';
   }
-  if (nextStep === 6) {
-    const msgs = {
-      travel: [
-        'O passaporte já está coçando? Seu próximo check-in está sendo financiado agora.',
-        'Troque o cinzeiro por milhas. A brisa do mar está mais perto do que você imagina.',
-        'Sua próxima viagem está sendo paga pela sua saúde. Belo trade-off.',
-      ],
-      gadget: [
-        'Seu novo setup agradece cada maço evitado. O upgrade está chegando.',
-        'Hardware novo com o dinheiro do cigarro? Um investimento justo no seu trabalho.',
-        'A cada dia sem fumar, você chega mais perto do dispositivo dos seus sonhos.',
-      ],
-      gastro: [
-        'Menos nicotina, mais paladar. Sua reserva para jantares incríveis está crescendo.',
-        'Alta gastronomia financiada pela sua disciplina. Aproveite cada sabor.',
-        'O paladar recuperado e a conta paga: a combinação perfeita para o seu próximo jantar.',
-      ],
-      invest: [
-        'O melhor aporte do mês é a sua longevidade. Juros compostos de saúde e dinheiro.',
-        'Saúde no verde, gastos no vermelho. O gráfico do seu futuro está excelente.',
-        'Sua carteira de investimentos agradece. O aporte na sua saúde rende 100% de lucro.',
-      ],
-      default: [
-        'Um dia de cada vez, um real de cada vez. O progresso é constante.',
-        'Você está construindo um novo hábito e um saldo muito mais saudável.',
-        'Foco no objetivo. Cada escolha de hoje constrói o seu resultado de amanhã.',
-      ],
-    };
-
-    const categoryMsgs = msgs[moneyDestination] || msgs.default;
-    return getRandomMessage(categoryMsgs);
+  if (nextStep === 5) {
+    const msgs = [
+      'Você está na reta final. Mais duas perguntas e seu plano está pronto.',
+      'Quase lá. Essas últimas respostas tornam seu plano muito mais preciso.',
+      'Falta pouco. Você está construindo algo real aqui.',
+    ];
+    return getRandomMessage(msgs);
   }
   return null;
 }
@@ -160,7 +137,7 @@ const CheckBtn = ({ label, active, onClick }) => (
 );
 
 // ── Main component ─────────────────────────────────────────
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 7;
 
 export const OnboardingScreen = ({ onComplete }) => {
   const [step, setStep] = React.useState(0);
@@ -183,8 +160,9 @@ export const OnboardingScreen = ({ onComplete }) => {
   const [behavioralData, setBehavioralData] = React.useState({
     triggerMoment: '',
     rituals: new Set(),
-    moneyDestination: '',
   });
+
+  const [rewardDream, setRewardDream] = React.useState('');
 
   // Etapa 3 — Resiliência mental
   const [mentalData, setMentalData] = React.useState({
@@ -201,7 +179,7 @@ export const OnboardingScreen = ({ onComplete }) => {
   };
 
   const goTo = (nextStep) => {
-    const msg = getToastMessage(nextStep, physioData.packCost, behavioralData.moneyDestination);
+    const msg = getToastMessage(nextStep, physioData.packCost);
     if (msg) showToast(msg);
     setStep(nextStep);
   };
@@ -233,7 +211,7 @@ export const OnboardingScreen = ({ onComplete }) => {
 
   const progress = Math.round((step / TOTAL_STEPS) * 100);
 
-  const step7Valid =
+  const step6Valid =
     mentalData.quitAttempts &&
     mentalData.longestQuit &&
     (mentalData.quitAttempts === 'never' || mentalData.quitDifficulties.size > 0);
@@ -254,8 +232,8 @@ export const OnboardingScreen = ({ onComplete }) => {
     behavioral: {
       triggerMoment: behavioralData.triggerMoment,
       rituals: [...behavioralData.rituals],
-      moneyDestination: behavioralData.moneyDestination,
     },
+    rewardDream,
     mental: {
       stressScale: mentalData.stressScale,
       stressCoping: [...mentalData.stressCoping],
@@ -401,25 +379,8 @@ export const OnboardingScreen = ({ onComplete }) => {
         </Card>
       )}
 
-      {/* ── Step 5: Etapa 2 — Destino do dinheiro ───────── */}
+      {/* ── Step 5: Etapa 3 — Escala + Coping ───────────── */}
       {step === 5 && (
-        <Card className="card--pad-lg">
-          <EtapaHeader etapa="Etapa 2 de 3 — Hábitos" title="Mapeamento de gatilhos" />
-          <label className="onboarding__field-label">Para onde iria o dinheiro economizado em 1 ano sem fumar?</label>
-          <div className="onboarding__options-col">
-            {MONEY_DESTINATIONS.map(opt => (
-              <RadioBtn key={opt.id} label={opt.label} active={behavioralData.moneyDestination === opt.id} onClick={() => setBehavioralData(p => ({ ...p, moneyDestination: opt.id }))} />
-            ))}
-          </div>
-          <div className="onboarding__actions">
-            <button onClick={() => goTo(4)} className="onboarding__btn-secondary">Voltar</button>
-            <button onClick={() => goTo(6)} disabled={!behavioralData.moneyDestination} className={`onboarding__btn-continue ${behavioralData.moneyDestination ? 'onboarding__btn-continue--active' : 'onboarding__btn-continue--disabled'}`}>Continuar</button>
-          </div>
-        </Card>
-      )}
-
-      {/* ── Step 6: Etapa 3 — Escala + Coping ───────────── */}
-      {step === 6 && (
         <Card className="card--pad-lg">
           <EtapaHeader etapa="Etapa 3 de 3 — Resiliência" title="Saúde mental e histórico" />
           <label className="onboarding__field-label">O quanto o cigarro é sua ferramenta para lidar com estresse ou ansiedade?</label>
@@ -436,14 +397,14 @@ export const OnboardingScreen = ({ onComplete }) => {
             ))}
           </div>
           <div className="onboarding__actions">
-            <button onClick={() => goTo(5)} className="onboarding__btn-secondary">Voltar</button>
-            <button onClick={() => goTo(7)} disabled={mentalData.stressCoping.size === 0} className={`onboarding__btn-continue ${mentalData.stressCoping.size > 0 ? 'onboarding__btn-continue--active' : 'onboarding__btn-continue--disabled'}`}>Continuar</button>
+            <button onClick={() => goTo(4)} className="onboarding__btn-secondary">Voltar</button>
+            <button onClick={() => goTo(6)} disabled={mentalData.stressCoping.size === 0} className={`onboarding__btn-continue ${mentalData.stressCoping.size > 0 ? 'onboarding__btn-continue--active' : 'onboarding__btn-continue--disabled'}`}>Continuar</button>
           </div>
         </Card>
       )}
 
-      {/* ── Step 7: Etapa 3 — Tentativas + Dificuldades ──── */}
-      {step === 7 && (
+      {/* ── Step 6: Etapa 3 — Tentativas + Dificuldades ──── */}
+      {step === 6 && (
         <Card className="card--pad-lg">
           <EtapaHeader etapa="Etapa 3 de 3 — Resiliência" title="Saúde mental e histórico" />
           <label className="onboarding__field-label">Quantas vezes você já tentou parar de fumar seriamente?</label>
@@ -469,28 +430,44 @@ export const OnboardingScreen = ({ onComplete }) => {
             </>
           )}
           <div className="onboarding__actions">
-            <button onClick={() => goTo(6)} className="onboarding__btn-secondary">Voltar</button>
+            <button onClick={() => goTo(5)} className="onboarding__btn-secondary">Voltar</button>
             <button
-              onClick={() => { goTo(8); }}
-              disabled={!step7Valid}
-              className={`onboarding__btn-continue ${step7Valid ? 'onboarding__btn-continue--active' : 'onboarding__btn-continue--disabled'}`}
-            >Finalizar</button>
+              onClick={() => goTo(7)}
+              disabled={!step6Valid}
+              className={`onboarding__btn-continue ${step6Valid ? 'onboarding__btn-continue--active' : 'onboarding__btn-continue--disabled'}`}
+            >Continuar</button>
           </div>
         </Card>
       )}
 
-      {/* ── Step 8: Conclusão ────────────────────────────── */}
-      {step === 8 && (
+      {/* ── Step 7: Conclusão — Recompensa ───────────────── */}
+      {step === 7 && (
         <Card className="card--pad-lg card--text-center">
           <div className="onboarding__success-icon">
             <Icon name="Check" size={36} color="var(--color-primary)" />
           </div>
-          <h2 className="onboarding__success-title">Tudo pronto!</h2>
+          <h2 className="onboarding__success-title">Seu plano está pronto!</h2>
           <p className="onboarding__success-text">
-            Sua jornada de {cigs} cigarros por dia para zero começa agora. Estaremos com você em cada momento.
+            Uma última pergunta, opcional. O que você mais quer conquistar ao se libertar do cigarro?
           </p>
-          <button onClick={() => onComplete({ cigs, packCost: physioData.packCost })} className="onboarding__start-btn">Começar Jornada →</button>
-          <div className="onboarding__privacy-note">Suas respostas são confidenciais</div>
+          <div className="onboarding__options-col" style={{ textAlign: 'left' }}>
+            {REWARD_DREAMS.map(opt => (
+              <RadioBtn
+                key={opt.id}
+                label={opt.label}
+                active={rewardDream === opt.id}
+                onClick={() => setRewardDream(prev => prev === opt.id ? '' : opt.id)}
+              />
+            ))}
+          </div>
+          <button
+            onClick={() => onComplete({ cigs, packCost: physioData.packCost, rewardDream })}
+            className="onboarding__start-btn"
+            style={{ marginTop: '8px' }}
+          >
+            Começar Jornada →
+          </button>
+          <div className="onboarding__privacy-note">Você pode pular esta etapa clicando em Começar Jornada</div>
         </Card>
       )}
      </div>
