@@ -86,11 +86,17 @@ export const CravingLogModal = ({ open, onClose }) => {
   );
 };
 
-export const Sidebar = ({ activePage, onNavigate, onLogout }) => {
+export const Sidebar = ({ activePage, onNavigate, onLogout, open, onClose }) => {
   const [modalOpen, setModalOpen] = React.useState(false);
+
+  const handleNavigate = (page) => {
+    onNavigate(page);
+    onClose?.();
+  };
+
   return (
     <>
-      <aside className="sidebar">
+      <aside className={`sidebar${open ? ' sidebar--open' : ''}`}>
         <div className="sidebar__brand">
           <div className="sidebar__brand-name">0 Fumo</div>
           <div className="sidebar__brand-tagline">Sua nova jornada</div>
@@ -104,7 +110,7 @@ export const Sidebar = ({ activePage, onNavigate, onLogout }) => {
             return (
               <button
                 key={item.id}
-                onClick={() => onNavigate(item.id)}
+                onClick={() => handleNavigate(item.id)}
                 className={`sidebar__nav-btn${active ? ' sidebar__nav-btn--active' : ''}`}
               >
                 <Icon name={item.icon} size={18} color={active ? 'var(--color-primary)' : '#999'} />
@@ -115,7 +121,7 @@ export const Sidebar = ({ activePage, onNavigate, onLogout }) => {
         </nav>
         <div className="sidebar__footer">
           <button
-            onClick={() => onNavigate('config')}
+            onClick={() => handleNavigate('config')}
             className={`sidebar__footer-btn${activePage === 'config' ? ' sidebar__footer-btn--active' : ''}`}
           >
             <Icon name="Settings" size={18} color={activePage === 'config' ? 'var(--color-primary)' : '#999'} />
@@ -132,24 +138,42 @@ export const Sidebar = ({ activePage, onNavigate, onLogout }) => {
   );
 };
 
-const TopBar = () => (
+const TopBar = ({ onMenuClick }) => (
   <div className="topbar">
-    <button className="topbar__notif-btn">
-      <Icon name="Bell" size={20} color="#6C727F" />
-      <span className="topbar__notif-badge"></span>
+    <button className="topbar__menu-btn" onClick={onMenuClick} aria-label="Abrir menu">
+      <Icon name="Menu" size={22} color="#6C727F" />
     </button>
-    <div className="topbar__avatar">
-      <Icon name="User" size={18} color="var(--color-primary)" />
+    <div className="topbar__right">
+      <button className="topbar__notif-btn">
+        <Icon name="Bell" size={20} color="#6C727F" />
+        <span className="topbar__notif-badge"></span>
+      </button>
+      <div className="topbar__avatar">
+        <Icon name="User" size={18} color="var(--color-primary)" />
+      </div>
     </div>
   </div>
 );
 
-export const AppShell = ({ activePage, onNavigate, onLogout, children }) => (
-  <div className="app-shell">
-    <Sidebar activePage={activePage} onNavigate={onNavigate} onLogout={onLogout} />
-    <main className="app-shell__main">
-      <TopBar />
-      {children}
-    </main>
-  </div>
-);
+export const AppShell = ({ activePage, onNavigate, onLogout, children }) => {
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
+  return (
+    <div className="app-shell">
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+      <Sidebar
+        activePage={activePage}
+        onNavigate={onNavigate}
+        onLogout={onLogout}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+      <main className="app-shell__main">
+        <TopBar onMenuClick={() => setSidebarOpen(true)} />
+        {children}
+      </main>
+    </div>
+  );
+};

@@ -6,6 +6,30 @@
   margin-bottom: 24px;
 }
 
+@media (max-width: 900px) {
+  .health__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .heart-card__body {
+    flex-direction: column;
+  }
+
+  .heart-card__chart {
+    align-self: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .health__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline__connector {
+    display: none;
+  }
+}
+
 /* ── Health item card ─────────────────────────────────── */
 .health-item__header {
   display: flex;

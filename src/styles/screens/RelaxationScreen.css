@@ -6,6 +6,16 @@
   margin-bottom: 24px;
 }
 
+@media (max-width: 768px) {
+  .relaxation__top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tips__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── Breathing card ───────────────────────────────────── */
 .breathing-card {
   background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);

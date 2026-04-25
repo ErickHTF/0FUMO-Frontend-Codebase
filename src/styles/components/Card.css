@@ -1,6 +1,6 @@
 .card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   border: 1px solid #F0F1F3;
@@ -8,7 +8,6 @@
 
 .card--pad-sm {
   padding: 20px;
-  border-radius: 16px;
 }
 
 .card--pad-lg {
@@ -17,7 +16,6 @@
 
 .card--pad-xl {
   padding: 28px;
-  border-radius: 18px;
 }
 
 .card--center {

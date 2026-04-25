@@ -18,6 +18,30 @@
   margin-top: 24px;
 }
 
+@media (max-width: 900px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__side-col {
+    flex-direction: row;
+  }
+
+  .dashboard__side-col > * {
+    flex: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard__bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__side-col {
+    flex-direction: column;
+  }
+}
+
 /* ── Progress card ────────────────────────────────────── */
 .progress-card {
   display: flex;

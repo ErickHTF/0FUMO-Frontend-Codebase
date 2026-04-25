@@ -166,3 +166,15 @@
   margin: 10px 0 0;
   line-height: 1.5;
 }
+
+@media (max-width: 600px) {
+  .triggers__header-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .triggers__new-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

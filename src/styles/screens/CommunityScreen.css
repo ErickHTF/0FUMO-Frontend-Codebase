@@ -311,3 +311,19 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
+@media (max-width: 768px) {
+  .ranking__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .achievements-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .achievements-grid {
+    grid-template-columns: 1fr;
+  }
+}
