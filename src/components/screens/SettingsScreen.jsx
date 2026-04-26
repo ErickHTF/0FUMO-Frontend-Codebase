@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from '../../lib/icons';
 import { Card, PageTitle } from '../ui/Card';
+import { Users } from '../../lib/api';
 import '../../styles/screens/SettingsScreen.css';
 
 const Toggle = ({ checked, onChange }) => (
@@ -12,7 +13,7 @@ const Toggle = ({ checked, onChange }) => (
   </button>
 );
 
-export const SettingsScreen = () => {
+export const SettingsScreen = ({ user, onDeleteAccount }) => {
   const [tab, setTab] = React.useState('privacidade');
   const [settings, setSettings] = React.useState({
     modoAnonimo: true,
@@ -148,10 +149,17 @@ export const SettingsScreen = () => {
             <Card className="card--mb-24">
               <h3 className="account__section-title">Informações da Conta</h3>
               <button className="account__email-btn">
+                <Icon name="User" size={18} color="var(--color-text-secondary)" />
+                <div>
+                  <div className="account__email-label">Nome</div>
+                  <div className="account__email-value">{user?.name || '—'}</div>
+                </div>
+              </button>
+              <button className="account__email-btn">
                 <Icon name="Mail" size={18} color="var(--color-text-secondary)" />
                 <div>
-                  <div className="account__email-label">Email</div>
-                  <div className="account__email-value">usuario@example.com</div>
+                  <div className="account__email-label">E-mail</div>
+                  <div className="account__email-value">{user?.email || '—'}</div>
                 </div>
               </button>
             </Card>
@@ -164,7 +172,17 @@ export const SettingsScreen = () => {
                   <Icon name="Download" size={16} color="var(--color-text-secondary)" />
                   Exportar
                 </button>
-                <button className="account__delete-btn">
+                <button
+                  className="account__delete-btn"
+                  onClick={async () => {
+                    if (!confirm('Tem certeza? Sua conta será excluída permanentemente.')) return;
+                    try {
+                      await Users.delete(user?.id);
+                    } finally {
+                      onDeleteAccount?.();
+                    }
+                  }}
+                >
                   <Icon name="Trash2" size={16} color="#DC2626" />
                   Excluir Conta
                 </button>

@@ -450,7 +450,7 @@ export const OnboardingScreen = ({ onComplete }) => {
           <p className="onboarding__success-text">
             Uma última pergunta, opcional. O que você mais quer conquistar ao se libertar do cigarro?
           </p>
-          <div className="onboarding__options-col" style={{ textAlign: 'left' }}>
+          <div className="onboarding__options-col">
             {REWARD_DREAMS.map(opt => (
               <RadioBtn
                 key={opt.id}
@@ -463,7 +463,6 @@ export const OnboardingScreen = ({ onComplete }) => {
           <button
             onClick={() => onComplete({ cigs, packCost: physioData.packCost, rewardDream })}
             className="onboarding__start-btn"
-            style={{ marginTop: '8px' }}
           >
             Começar Jornada →
           </button>

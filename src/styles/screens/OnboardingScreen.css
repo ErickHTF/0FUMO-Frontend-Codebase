@@ -238,6 +238,7 @@
   cursor: pointer;
   font-family: inherit;
   box-shadow: 0 4px 12px rgba(34, 151, 107, 0.3);
+  margin-top: 8px;
 }
 
 .onboarding__privacy-note {
@@ -312,6 +313,7 @@
   flex-direction: column;
   gap: 8px;
   margin: 12px 0 24px;
+  text-align: left;
 }
 
 /* ── Radio button ─────────────────────────────────────── */
