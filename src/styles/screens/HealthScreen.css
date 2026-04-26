@@ -7,27 +7,14 @@
 }
 
 @media (max-width: 900px) {
-  .health__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .heart-card__body {
-    flex-direction: column;
-  }
-
-  .heart-card__chart {
-    align-self: center;
-  }
+  .health__grid { grid-template-columns: repeat(2, 1fr); }
+  .heart-card__body { flex-direction: column; }
+  .heart-card__chart { align-self: center; }
 }
 
 @media (max-width: 600px) {
-  .health__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .timeline__connector {
-    display: none;
-  }
+  .health__grid { grid-template-columns: 1fr; }
+  .timeline__connector { display: none; }
 }
 
 /* ── Health item card ─────────────────────────────────── */
@@ -48,8 +35,8 @@
 }
 
 .health-item__icon--primary { background: var(--color-primary-light); }
-.health-item__icon--blue    { background: #EFF6FF; }
-.health-item__icon--amber   { background: #FEF3C7; }
+.health-item__icon--blue    { background: rgba(59, 130, 246, 0.12); }
+.health-item__icon--amber   { background: rgba(245, 158, 11, 0.12); }
 
 .health-item__pct {
   font-size: 28px;
@@ -61,6 +48,7 @@
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 8px;
+  color: var(--color-text-primary);
 }
 
 .health-item__note {
@@ -68,7 +56,7 @@
   color: var(--color-text-secondary);
   line-height: 1.5;
   padding: 8px 10px;
-  background: #F9FAFB;
+  background: var(--color-hover);
   border-radius: 8px;
 }
 
@@ -79,9 +67,7 @@
   align-items: center;
 }
 
-.heart-card__text {
-  flex: 1;
-}
+.heart-card__text { flex: 1; }
 
 .heart-card__badge {
   display: inline-flex;
@@ -89,7 +75,7 @@
   gap: 6px;
   padding: 4px 12px;
   border-radius: 20px;
-  background: #FEE2E2;
+  background: rgba(239, 68, 68, 0.12);
   font-size: 12px;
   color: #EF4444;
   font-weight: 600;
@@ -100,6 +86,7 @@
   font-size: 24px;
   font-weight: 700;
   margin: 0 0 12px;
+  color: var(--color-text-primary);
 }
 
 .heart-card__desc {
@@ -114,7 +101,7 @@
   color: var(--color-text-secondary);
   line-height: 1.5;
   padding: 10px 12px;
-  background: #F9FAFB;
+  background: var(--color-hover);
   border-radius: 8px;
   display: flex;
   align-items: flex-start;
@@ -126,7 +113,7 @@
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  border: 8px solid #F0F1F3;
+  border: 8px solid var(--color-border);
   position: relative;
   display: flex;
   align-items: center;
@@ -140,19 +127,18 @@
   transform: rotate(-90deg);
 }
 
-.heart-card__chart-inner {
-  text-align: center;
-}
+.heart-card__chart-inner { text-align: center; }
 
 .heart-card__chart-value {
   font-size: 24px;
   font-weight: 700;
   margin-top: 4px;
+  color: var(--color-text-primary);
 }
 
 .heart-card__chart-label {
   font-size: 11px;
-  color: #999;
+  color: var(--color-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -173,13 +159,12 @@
 }
 
 /* ── Timeline card ────────────────────────────────────── */
-.timeline-card {
-  margin-top: 24px;
-}
+.timeline-card { margin-top: 24px; }
 
 .timeline-card__title {
   font-size: 17px;
   margin: 0 0 16px;
+  color: var(--color-text-primary);
 }
 
 .timeline {
@@ -209,32 +194,28 @@
   margin-top: 4px;
 }
 
-.timeline__dot--done   { background: var(--color-primary); border: none; }
-.timeline__dot--pending { background: transparent; border: 2px solid #D1D5DB; }
+.timeline__dot--done    { background: var(--color-primary); border: none; }
+.timeline__dot--pending { background: transparent; border: 2px solid var(--color-border-input); }
 
 .timeline__line {
   width: 2px;
   height: 32px;
 }
 
-.timeline__line--done   { background: var(--color-primary); }
-.timeline__line--pending { background: #E5E7EB; }
+.timeline__line--done    { background: var(--color-primary); }
+.timeline__line--pending { background: var(--color-border-input); }
 
-.timeline__content {
-  padding-bottom: 16px;
-}
+.timeline__content { padding-bottom: 16px; }
 
 .timeline__time {
   font-size: 12px;
   font-weight: 600;
 }
 
-.timeline__time--done   { color: var(--color-primary); }
-.timeline__time--pending { color: #999; }
+.timeline__time--done    { color: var(--color-primary); }
+.timeline__time--pending { color: var(--color-muted); }
 
-.timeline__label {
-  font-size: 14px;
-}
+.timeline__label { font-size: 14px; }
 
-.timeline__label--done   { color: var(--color-text-primary); }
-.timeline__label--pending { color: #999; }
+.timeline__label--done    { color: var(--color-text-primary); }
+.timeline__label--pending { color: var(--color-muted); }

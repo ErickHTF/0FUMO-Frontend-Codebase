@@ -138,7 +138,7 @@ export const Sidebar = ({ activePage, onNavigate, onLogout, open, onClose }) => 
   );
 };
 
-const TopBar = ({ onMenuClick }) => (
+const TopBar = ({ onMenuClick, onToggleDarkMode, isDarkMode }) => (
   <div className="topbar">
     <button className="topbar__menu-btn" onClick={onMenuClick} aria-label="Abrir menu">
       <Icon name="Menu" size={22} color="#6C727F" />
@@ -148,6 +148,9 @@ const TopBar = ({ onMenuClick }) => (
         <Icon name="Bell" size={20} color="#6C727F" />
         <span className="topbar__notif-badge"></span>
       </button>
+      <button className="topbar__theme-btn" onClick={onToggleDarkMode} aria-label="Alternar modo escuro">
+        <Icon name={isDarkMode ? 'Sun' : 'Moon'} size={20} color="#6C727F" />
+      </button>
       <div className="topbar__avatar">
         <Icon name="User" size={18} color="var(--color-primary)" />
       </div>
@@ -155,7 +158,7 @@ const TopBar = ({ onMenuClick }) => (
   </div>
 );
 
-export const AppShell = ({ activePage, onNavigate, onLogout, children }) => {
+export const AppShell = ({ activePage, onNavigate, onLogout, onToggleDarkMode, isDarkMode, children }) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
 
   return (
@@ -171,7 +174,7 @@ export const AppShell = ({ activePage, onNavigate, onLogout, children }) => {
         onClose={() => setSidebarOpen(false)}
       />
       <main className="app-shell__main">
-        <TopBar onMenuClick={() => setSidebarOpen(true)} />
+        <TopBar onMenuClick={() => setSidebarOpen(true)} onToggleDarkMode={onToggleDarkMode} isDarkMode={isDarkMode} />
         {children}
       </main>
     </div>

@@ -1,5 +1,7 @@
 import React from 'react';
+import { Routes, Route, Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { AppShell } from './components/Shell';
+import { LandingScreen } from './components/screens/LandingScreen';
 import { OnboardingScreen } from './components/screens/OnboardingScreen';
 import { SignUpScreen } from './components/screens/SignUpScreen';
 import { LoginScreen } from './components/screens/LoginScreen';
@@ -9,138 +11,148 @@ import { TriggersScreen } from './components/screens/TriggersScreen';
 import { RelaxationScreen } from './components/screens/RelaxationScreen';
 import { CommunityScreen } from './components/screens/CommunityScreen';
 import { SettingsScreen } from './components/screens/SettingsScreen';
-import { LandingScreen } from './components/screens/LandingScreen';
-import { saveSession, clearSession, getStoredUser } from './lib/api';
+import { saveSession, clearSession, getStoredUser, getToken } from './lib/api';
 
+// ── Maps URL pathname → Shell activePage id ─────────────────
+const PATH_TO_PAGE = {
+  '/':           'dashboard',
+  '/saude':      'saude',
+  '/gatilhos':   'gatilhos',
+  '/relaxar':    'relaxar',
+  '/comunidade': 'comunidade',
+  '/config':     'config',
+};
+
+// ── Layout wrapper: bridges Router ↔ AppShell ───────────────
+function AppLayout({ user, onLogout, isDarkMode, onToggleDarkMode }) {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  return (
+    <AppShell
+      activePage={PATH_TO_PAGE[pathname] || 'dashboard'}
+      onNavigate={(page) => navigate(page === 'dashboard' ? '/' : `/${page}`)}
+      onLogout={onLogout}
+      isDarkMode={isDarkMode}
+      onToggleDarkMode={onToggleDarkMode}
+    >
+      <Outlet context={{ user, onLogout }} />
+    </AppShell>
+  );
+}
+
+// ── Redirects to /landing if no JWT present ──────────────────
+function PrivateRoute() {
+  return getToken() ? <Outlet /> : <Navigate to="/landing" replace />;
+}
+
+// ── Root ─────────────────────────────────────────────────────
 function App() {
-  const [onboarded, setOnboarded] = React.useState(() =>
-    localStorage.getItem('0fumo_onboarded') === 'true'
-  );
-  const [onboardingStarted, setOnboardingStarted] = React.useState(() =>
-    localStorage.getItem('0fumo_onboarding_started') === 'true'
-  );
-  const [signupPending, setSignupPending] = React.useState(() =>
-    localStorage.getItem('0fumo_signup_pending') === 'true'
-  );
-  const [onboardingData, setOnboardingData] = React.useState(() => {
-    try {
-      const saved = localStorage.getItem('0fumo_onboarding_data');
-      return saved ? JSON.parse(saved) : null;
-    } catch { return null; }
-  });
-  const [activePage, setActivePage] = React.useState(() =>
-    localStorage.getItem('0fumo_activePage') || 'dashboard'
-  );
+  const navigate = useNavigate();
+
   const [user, setUser] = React.useState(() => getStoredUser());
-  const [showLogin, setShowLogin] = React.useState(false);
+  const [isDarkMode, setIsDarkMode] = React.useState(
+    () => localStorage.getItem('0fumo_darkMode') === 'true'
+  );
+
+  React.useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDarkMode);
+    localStorage.setItem('0fumo_darkMode', isDarkMode.toString());
+  }, [isDarkMode]);
+
+  // Read onboarding data saved by OnboardingScreen
+  const onboardingData = React.useMemo(() => {
+    try { return JSON.parse(localStorage.getItem('0fumo_onboarding_data')); }
+    catch { return null; }
+  }, []);
 
   const handleOnboardingComplete = (data) => {
-    setSignupPending(true);
-    setOnboardingStarted(false);
-    if (data) {
-      setOnboardingData(data);
-      localStorage.setItem('0fumo_onboarding_data', JSON.stringify(data));
-    }
-    localStorage.setItem('0fumo_signup_pending', 'true');
-    localStorage.removeItem('0fumo_onboarding_started');
+    if (data) localStorage.setItem('0fumo_onboarding_data', JSON.stringify(data));
+    navigate('/register');
   };
 
   const handleSignUpComplete = (authData) => {
     saveSession(authData);
     setUser(authData.user);
-    setOnboarded(true);
-    setSignupPending(false);
-    setActivePage('dashboard');
-    localStorage.setItem('0fumo_onboarded', 'true');
-    localStorage.setItem('0fumo_activePage', 'dashboard');
-    localStorage.removeItem('0fumo_signup_pending');
     localStorage.removeItem('0fumo_onboarding_data');
+    navigate('/');
   };
-
-  const handleStartJourney = () => {
-    setOnboardingStarted(true);
-    localStorage.setItem('0fumo_onboarding_started', 'true');
-  };
-
-  const handleShowLogin = () => setShowLogin(true);
 
   const handleLoginSuccess = (authData) => {
     saveSession(authData);
     setUser(authData.user);
-    setOnboarded(true);
-    setShowLogin(false);
-    setOnboardingStarted(false);
-    setSignupPending(false);
-    setActivePage('dashboard');
-    localStorage.setItem('0fumo_onboarded', 'true');
-    localStorage.setItem('0fumo_activePage', 'dashboard');
-    localStorage.removeItem('0fumo_onboarding_started');
-    localStorage.removeItem('0fumo_signup_pending');
-  };
-
-  const handleNavigate = (page) => {
-    setActivePage(page);
-    localStorage.setItem('0fumo_activePage', page);
+    navigate('/');
   };
 
   const handleLogout = () => {
     clearSession();
     setUser(null);
-    setOnboarded(false);
-    setOnboardingStarted(false);
-    setSignupPending(false);
-    setOnboardingData(null);
-    setShowLogin(false);
-    localStorage.removeItem('0fumo_onboarded');
-    localStorage.removeItem('0fumo_activePage');
-    localStorage.removeItem('0fumo_onboarding_started');
-    localStorage.removeItem('0fumo_signup_pending');
-    localStorage.removeItem('0fumo_onboarding_data');
-  };
-
-  if (showLogin) {
-    return (
-      <LoginScreen
-        onSuccess={handleLoginSuccess}
-        onBack={() => setShowLogin(false)}
-      />
-    );
-  }
-
-  if (!onboarded) {
-    if (signupPending) {
-      return (
-        <SignUpScreen
-          onComplete={handleSignUpComplete}
-          onLogin={handleShowLogin}
-          onboardingData={onboardingData}
-        />
-      );
-    }
-    if (onboardingStarted) {
-      return <OnboardingScreen onComplete={handleOnboardingComplete} />;
-    }
-    return <LandingScreen onStart={handleStartJourney} onLogin={handleShowLogin} />;
-  }
-
-  const renderScreen = () => {
-    if (activePage === 'config') {
-      return <SettingsScreen user={user} onDeleteAccount={handleLogout} />;
-    }
-    const screens = {
-      dashboard: <DashboardScreen />,
-      saude: <HealthScreen />,
-      gatilhos: <TriggersScreen />,
-      relaxar: <RelaxationScreen />,
-      comunidade: <CommunityScreen />,
-    };
-    return screens[activePage] || screens.dashboard;
+    navigate('/landing');
   };
 
   return (
-    <AppShell activePage={activePage} onNavigate={handleNavigate} onLogout={handleLogout}>
-      {renderScreen()}
-    </AppShell>
+    <Routes>
+      {/* ── Public ────────────────────────────────────────── */}
+      <Route
+        path="/landing"
+        element={
+          <LandingScreen
+            onStart={() => navigate('/onboarding')}
+            onLogin={() => navigate('/login')}
+          />
+        }
+      />
+      <Route
+        path="/onboarding"
+        element={<OnboardingScreen onComplete={handleOnboardingComplete} />}
+      />
+      <Route
+        path="/register"
+        element={
+          <SignUpScreen
+            onComplete={handleSignUpComplete}
+            onLogin={() => navigate('/login')}
+            onboardingData={onboardingData}
+          />
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <LoginScreen
+            onSuccess={handleLoginSuccess}
+            onBack={() => navigate('/landing')}
+          />
+        }
+      />
+
+      {/* ── Protected ─────────────────────────────────────── */}
+      <Route element={<PrivateRoute />}>
+        <Route
+          element={
+            <AppLayout
+              user={user}
+              onLogout={handleLogout}
+              isDarkMode={isDarkMode}
+              onToggleDarkMode={() => setIsDarkMode(v => !v)}
+            />
+          }
+        >
+          <Route path="/"           element={<DashboardScreen />} />
+          <Route path="/saude"      element={<HealthScreen />} />
+          <Route path="/gatilhos"   element={<TriggersScreen />} />
+          <Route path="/relaxar"    element={<RelaxationScreen />} />
+          <Route path="/comunidade" element={<CommunityScreen />} />
+          <Route
+            path="/config"
+            element={<SettingsScreen user={user} onDeleteAccount={handleLogout} />}
+          />
+        </Route>
+      </Route>
+
+      {/* ── Fallback ──────────────────────────────────────── */}
+      <Route path="*" element={<Navigate to={getToken() ? '/' : '/landing'} replace />} />
+    </Routes>
   );
 }
 

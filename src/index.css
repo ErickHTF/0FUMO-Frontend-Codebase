@@ -13,6 +13,36 @@
   --color-error: #ef4444;
 }
 
+/* Dark mode colors */
+html.dark {
+  --color-primary: #2daa7d;
+  --color-primary-dark: #1f7d59;
+  --color-primary-light: #1a4d39;
+  --color-surface: #121619;
+  --color-text-primary: #f0f1f3;
+  --color-text-secondary: #a1a5b1;
+  --color-border: #2a2e35;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+}
+
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #2daa7d;
+    --color-primary-dark: #1f7d59;
+    --color-primary-light: #1a4d39;
+    --color-surface: #121619;
+    --color-text-primary: #f0f1f3;
+    --color-text-secondary: #a1a5b1;
+    --color-border: #2a2e35;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;

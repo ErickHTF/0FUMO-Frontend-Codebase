@@ -1,9 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from '../../lib/icons';
 import { Auth, saveSession } from '../../lib/api';
 import '../../styles/screens/LoginScreen.css';
 
 export const LoginScreen = ({ onSuccess, onBack }) => {
+  const navigate = useNavigate();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
@@ -101,7 +103,7 @@ export const LoginScreen = ({ onSuccess, onBack }) => {
 
         <div className="login__signup-link">
           Não tem conta?{' '}
-          <button type="button" onClick={onBack}>Criar conta gratuita</button>
+          <button type="button" onClick={() => navigate('/register')}>Criar conta gratuita</button>
         </div>
       </div>
     </div>

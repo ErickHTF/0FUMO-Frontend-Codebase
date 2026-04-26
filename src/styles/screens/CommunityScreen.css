@@ -3,7 +3,7 @@
   display: flex;
   gap: 4px;
   margin-bottom: 24px;
-  background: #F5F6F8;
+  background: var(--color-hover);
   border-radius: 10px;
   padding: 4px;
 }
@@ -20,19 +20,24 @@
   cursor: pointer;
   font-family: inherit;
   font-size: 14px;
+  transition: all 0.15s;
 }
 
 .community__tab-btn--active {
-  background: #fff;
+  background: var(--color-card);
   font-weight: 600;
   color: var(--color-text-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .community__tab-btn--inactive {
   background: transparent;
   font-weight: 400;
   color: var(--color-text-secondary);
+}
+
+.community__tab-btn--inactive:hover {
+  color: var(--color-text-primary);
 }
 
 /* ── Feed ─────────────────────────────────────────────── */
@@ -99,7 +104,7 @@
 .challenge__progress-fill {
   height: 100%;
   border-radius: 3px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.85);
   width: 74.5%;
 }
 
@@ -107,12 +112,18 @@
   padding: 14px 28px;
   border-radius: 12px;
   border: none;
-  background: #fff;
-  color: var(--color-primary-dark);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
   font-weight: 600;
   font-size: 15px;
   cursor: pointer;
   font-family: inherit;
+  border: 1px solid rgba(255,255,255,0.3);
+  transition: background 0.2s;
+}
+
+.challenge__join-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* ── Post card ────────────────────────────────────────── */
@@ -133,12 +144,14 @@
   color: #fff;
   font-weight: 600;
   font-size: 16px;
-  background: var(--avatar-color, #999);
+  background: var(--avatar-color, var(--color-muted));
+  flex-shrink: 0;
 }
 
 .post__name {
   font-weight: 600;
   font-size: 14px;
+  color: var(--color-text-primary);
 }
 
 .post__time {
@@ -159,6 +172,7 @@
 .post__achievement-title {
   font-weight: 600;
   font-size: 14px;
+  color: var(--color-primary-dark);
 }
 
 .post__achievement-text {
@@ -185,18 +199,26 @@
   gap: 5px;
   padding: 6px 12px;
   border-radius: 20px;
-  border: 1px solid #E5E7EB;
-  background: #fff;
+  border: 1px solid var(--color-border-input);
+  background: var(--color-input-bg);
   font-size: 13px;
   cursor: pointer;
   font-family: inherit;
   color: var(--color-text-secondary);
+  transition: all 0.15s;
+}
+
+.post__reaction-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-hover);
 }
 
 /* ── Achievements tab ─────────────────────────────────── */
 .achievements-tab__title {
   font-size: 17px;
   margin: 0 0 20px;
+  color: var(--color-text-primary);
 }
 
 .achievements-grid {
@@ -217,11 +239,11 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto 10px;
-  background: var(--badge-color, #F0F1F3);
+  background: var(--badge-color, var(--color-hover));
 }
 
 .community-badge__circle--locked {
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 .community-badge__label {
@@ -230,7 +252,7 @@
 }
 
 .community-badge__label--unlocked { color: var(--color-text-primary); }
-.community-badge__label--locked   { color: #999; }
+.community-badge__label--locked   { color: var(--color-muted); }
 
 /* ── Ranking tab ──────────────────────────────────────── */
 .ranking__grid {
@@ -242,6 +264,7 @@
 .ranking__board-title {
   margin: 0 0 4px;
   font-size: 16px;
+  color: var(--color-text-primary);
 }
 
 .ranking__board-sub {
@@ -271,7 +294,7 @@
 .ranking__position {
   font-size: 14px;
   font-weight: 600;
-  color: #999;
+  color: var(--color-muted);
   width: 16px;
 }
 
@@ -285,19 +308,18 @@
   color: #fff;
   font-weight: 600;
   font-size: 14px;
-  background: var(--avatar-color, #999);
+  background: var(--avatar-color, var(--color-muted));
 }
 
 .ranking__name {
   flex: 1;
   font-size: 14px;
+  color: var(--color-text-primary);
 }
 
 .ranking__name--you { font-weight: 600; }
 
-.ranking__score {
-  text-align: right;
-}
+.ranking__score { text-align: right; }
 
 .ranking__score-value {
   font-size: 18px;
@@ -307,23 +329,16 @@
 
 .ranking__score-label {
   font-size: 10px;
-  color: #999;
+  color: var(--color-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 @media (max-width: 768px) {
-  .ranking__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .achievements-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .ranking__grid { grid-template-columns: 1fr; }
+  .achievements-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 480px) {
-  .achievements-grid {
-    grid-template-columns: 1fr;
-  }
+  .achievements-grid { grid-template-columns: 1fr; }
 }

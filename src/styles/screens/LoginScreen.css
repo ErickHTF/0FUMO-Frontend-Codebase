@@ -8,7 +8,7 @@
 }
 
 .login__card {
-  background: #fff;
+  background: var(--color-card);
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
   padding: 2.5rem 2rem;
@@ -76,7 +76,7 @@
 .login__input {
   width: 100%;
   padding: 0.65rem 0.9rem;
-  border: 1.5px solid #E5E7EB;
+  border: 1.5px solid var(--color-border-input);
   border-radius: 10px;
   font-size: 0.95rem;
   outline: none;

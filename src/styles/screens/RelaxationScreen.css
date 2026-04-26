@@ -7,45 +7,42 @@
 }
 
 @media (max-width: 768px) {
-  .relaxation__top-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .tips__grid {
-    grid-template-columns: 1fr;
-  }
+  .relaxation__top-grid { grid-template-columns: 1fr; }
+  .tips__grid { grid-template-columns: 1fr; }
 }
 
 /* ── Breathing card ───────────────────────────────────── */
 .breathing-card {
-  background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
-  border: 1px solid rgba(34, 151, 107, 0.1);
+  background: var(--color-primary-light);
+  border: 1px solid rgba(34, 151, 107, 0.15);
 }
 
 .relaxation__card-icon {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-card);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-sm);
 }
 
 .relaxation__card-icon--blue {
-  background: #EFF6FF;
+  background: rgba(59, 130, 246, 0.12);
 }
 
 .relaxation__card-title {
   font-size: 22px;
   margin: 0 0 8px;
+  color: var(--color-text-primary);
 }
 
 .relaxation__card-title--sm {
   font-size: 18px;
   margin: 0 0 8px;
+  color: var(--color-text-primary);
 }
 
 .relaxation__card-desc {
@@ -81,6 +78,11 @@
   font-size: 14px;
   cursor: pointer;
   font-family: inherit;
+  transition: background 0.2s;
+}
+
+.relaxation__play-btn:hover {
+  background: var(--color-primary-dark);
 }
 
 .relaxation__play-btn--outline {
@@ -89,12 +91,19 @@
   gap: 8px;
   padding: 10px 20px;
   border-radius: 8px;
-  border: 1.5px solid #E5E7EB;
-  background: #fff;
+  border: 1.5px solid var(--color-border-input);
+  background: var(--color-input-bg);
+  color: var(--color-text-primary);
   font-weight: 500;
   font-size: 14px;
   cursor: pointer;
   font-family: inherit;
+  transition: all 0.15s;
+}
+
+.relaxation__play-btn--outline:hover {
+  border-color: var(--color-primary);
+  background: var(--color-hover);
 }
 
 .relaxation__duration {
@@ -119,6 +128,7 @@
 .tips__title {
   margin: 0;
   font-size: 17px;
+  color: var(--color-text-primary);
 }
 
 .tips__see-all {
@@ -126,7 +136,10 @@
   color: var(--color-primary);
   font-weight: 500;
   cursor: pointer;
+  transition: opacity 0.15s;
 }
+
+.tips__see-all:hover { opacity: 0.75; }
 
 .tips__grid {
   display: grid;
@@ -137,13 +150,19 @@
 .tip-item {
   padding: 16px;
   border-radius: 10px;
-  background: #F9FAFB;
-  border: 1px solid #F0F1F3;
+  background: var(--color-hover);
+  border: 1px solid var(--color-border);
+  transition: border-color 0.15s;
+}
+
+.tip-item:hover {
+  border-color: var(--color-primary);
 }
 
 .tip-item__title {
   margin: 10px 0 6px;
   font-size: 14px;
+  color: var(--color-text-primary);
 }
 
 .tip-item__desc {
