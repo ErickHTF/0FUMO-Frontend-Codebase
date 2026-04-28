@@ -53,3 +53,15 @@ export const Users = {
 
   delete: (id) => apiFetch(`/users/${id}`, { method: 'DELETE' }),
 };
+
+export const Events = {
+  create: (eventType, intensity, context, note, occurredAt) =>
+    apiFetch('/events', { method: 'POST', body: JSON.stringify({ eventType, intensity, context, note, occurredAt }) }),
+
+  list: (type) =>
+    apiFetch('/events' + (type ? `?type=${type}` : '')),
+
+  stats: () => apiFetch('/events/stats'),
+
+  remove: (id) => apiFetch(`/events/${id}`, { method: 'DELETE' }),
+};

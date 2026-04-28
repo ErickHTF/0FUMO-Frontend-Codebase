@@ -194,6 +194,35 @@
   color: var(--color-text-primary);
 }
 
+.modal-datetime-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-border-input);
+  background: var(--color-input-bg);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+  margin: 8px 0 0;
+  transition: border-color 0.2s;
+  outline: none;
+  cursor: pointer;
+}
+
+.modal-datetime-input:focus {
+  border-color: var(--color-primary);
+}
+
+.modal-datetime-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.4);
+  cursor: pointer;
+}
+
+html.dark .modal-datetime-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+}
+
 .modal-textarea {
   width: 100%;
   height: 80px;
@@ -269,6 +298,33 @@
 
 .sidebar__cta {
   margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar__cigarette-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+
+.sidebar__cigarette-btn:hover {
+  border-color: var(--color-error);
+  color: var(--color-error);
+  background: rgba(239, 68, 68, 0.06);
 }
 
 .sidebar__nav {
