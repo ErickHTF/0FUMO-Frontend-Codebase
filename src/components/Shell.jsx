@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon } from '../lib/icons';
 import { Card } from './ui/Card';
+import { Events } from '../lib/api';
 import '../styles/components/Shell.css';
 
 const NAV_ITEMS = [
@@ -18,16 +19,47 @@ export const LogCravingButton = ({ onClick }) => (
   </button>
 );
 
+export const LogCigaretteButton = ({ onClick }) => (
+  <button onClick={onClick} className="log-cigarette-btn">
+    <Icon name="Plus" size={20} color="currentColor" />
+    <span>Registrar Fumo</span>
+  </button>
+);
+
 export const CravingLogModal = ({ open, onClose }) => {
   const [intensity, setIntensity] = React.useState(3);
   const [trigger, setTrigger] = React.useState('');
   const [note, setNote] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
   const triggers = ['Ansiedade', 'Hábito', 'Social', 'Cansaço', 'Estresse', 'Tédio'];
 
   React.useEffect(() => {
-    if (open) { setSubmitted(false); setIntensity(3); setTrigger(''); setNote(''); }
+    if (open) { setSubmitted(false); setIntensity(3); setTrigger(''); setNote(''); setError(''); }
   }, [open]);
+
+  const handleRegister = async () => {
+    if (!trigger) {
+      setError('Selecione o que provocou o desejo');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      await Events.create('CRAVING', intensity, trigger, note, new Date().toISOString());
+      setSubmitted(true);
+      // Notifica que um novo evento foi criado
+      window.dispatchEvent(new CustomEvent('craving-logged'));
+    } catch (err) {
+      setError('Erro ao registrar. Tente novamente.');
+      console.error('Erro ao registrar craving:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!open) return null;
 
@@ -78,7 +110,114 @@ export const CravingLogModal = ({ open, onClose }) => {
               placeholder="Como foi o momento..."
               className="modal-textarea"
             />
-            <button onClick={() => setSubmitted(true)} className="modal-submit-btn">Registrar</button>
+            {error && (
+              <div className="modal-error">
+                <Icon name="AlertCircle" size={14} color="#DC2626" />
+                {error}
+              </div>
+            )}
+            <button onClick={handleRegister} disabled={loading || !trigger} className="modal-submit-btn">
+              {loading ? 'Registrando...' : 'Registrar'}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export const CigaretteLogModal = ({ open, onClose }) => {
+  const [intensity, setIntensity] = React.useState(3);
+  const [trigger, setTrigger] = React.useState('');
+  const [note, setNote] = React.useState('');
+  const [submitted, setSubmitted] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+  const triggers = ['Ansiedade', 'Hábito', 'Social', 'Cansaço', 'Estresse', 'Tédio'];
+
+  React.useEffect(() => {
+    if (open) { setSubmitted(false); setIntensity(3); setTrigger(''); setNote(''); setError(''); }
+  }, [open]);
+
+  const handleRegister = async () => {
+    if (!trigger) {
+      setError('Selecione o que provocou');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      await Events.create('CIGARETTE_SMOKED', intensity, trigger, note, new Date().toISOString());
+      setSubmitted(true);
+      window.dispatchEvent(new CustomEvent('craving-logged'));
+    } catch (err) {
+      setError('Erro ao registrar. Tente novamente.');
+      console.error('Erro ao registrar cigarro:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} className="modal-box">
+        {submitted ? (
+          <div className="modal-success">
+            <div className="modal-success__icon">
+              <Icon name="Check" size={32} color="var(--color-primary)" />
+            </div>
+            <h3 className="modal-success__title">Registrado!</h3>
+            <p className="modal-success__text">Obrigado por registrar. Isso ajuda a entender os padrões para melhorar.</p>
+            <button onClick={onClose} className="modal-success__close">Fechar</button>
+          </div>
+        ) : (
+          <>
+            <div className="modal-header">
+              <h3 className="modal-header__title">Registrar que você fumou</h3>
+              <button onClick={onClose} className="modal-icon-btn">
+                <Icon name="X" size={20} color="#999" />
+              </button>
+            </div>
+            <label className="modal-field-label">Intensidade do desejo</label>
+            <div className="modal-intensity-row">
+              {[1, 2, 3, 4, 5].map(v => (
+                <button
+                  key={v}
+                  onClick={() => setIntensity(v)}
+                  className={`modal-intensity-btn ${v <= intensity ? 'modal-intensity-btn--active' : 'modal-intensity-btn--inactive'}`}
+                >{v}</button>
+              ))}
+            </div>
+            <label className="modal-field-label">O que provocou?</label>
+            <div className="modal-triggers-row">
+              {triggers.map(t => (
+                <button
+                  key={t}
+                  onClick={() => setTrigger(t)}
+                  className={`modal-trigger-btn ${trigger === t ? 'modal-trigger-btn--active' : 'modal-trigger-btn--inactive'}`}
+                >{t}</button>
+              ))}
+            </div>
+            <label className="modal-field-label">Quer anotar algo? (opcional)</label>
+            <textarea
+              value={note}
+              onChange={e => setNote(e.target.value)}
+              placeholder="Como foi o momento..."
+              className="modal-textarea"
+            />
+            {error && (
+              <div className="modal-error">
+                <Icon name="AlertCircle" size={14} color="#DC2626" />
+                {error}
+              </div>
+            )}
+            <button onClick={handleRegister} disabled={loading || !trigger} className="modal-submit-btn">
+              {loading ? 'Registrando...' : 'Registrar'}
+            </button>
           </>
         )}
       </div>
@@ -87,7 +226,8 @@ export const CravingLogModal = ({ open, onClose }) => {
 };
 
 export const Sidebar = ({ activePage, onNavigate, onLogout, open, onClose }) => {
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [cravingModalOpen, setCravingModalOpen] = React.useState(false);
+  const [cigaretteModalOpen, setCigaretteModalOpen] = React.useState(false);
 
   const handleNavigate = (page) => {
     onNavigate(page);
@@ -102,7 +242,8 @@ export const Sidebar = ({ activePage, onNavigate, onLogout, open, onClose }) => 
           <div className="sidebar__brand-tagline">Sua nova jornada</div>
         </div>
         <div className="sidebar__cta">
-          <LogCravingButton onClick={() => setModalOpen(true)} />
+          <LogCravingButton onClick={() => setCravingModalOpen(true)} />
+          <LogCigaretteButton onClick={() => setCigaretteModalOpen(true)} />
         </div>
         <nav className="sidebar__nav">
           {NAV_ITEMS.map(item => {
@@ -133,7 +274,8 @@ export const Sidebar = ({ activePage, onNavigate, onLogout, open, onClose }) => 
           </button>
         </div>
       </aside>
-      <CravingLogModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <CravingLogModal open={cravingModalOpen} onClose={() => setCravingModalOpen(false)} />
+      <CigaretteLogModal open={cigaretteModalOpen} onClose={() => setCigaretteModalOpen(false)} />
     </>
   );
 };
