@@ -4,7 +4,7 @@
   --color-primary: #22976B;
   --color-primary-dark: #1a6d4f;
   --color-primary-light: #e8f5f1;
-  --color-surface: #f5f6f8;
+  --color-surface: #FDFCFB;
   --color-card: #ffffff;
   --color-text-primary: #0F172A;
   --color-text-secondary: #6c727f;
@@ -16,6 +16,7 @@
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
+  --color-border-card: rgba(0, 0, 0, 0.07);
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
 }
@@ -31,6 +32,7 @@ html.dark {
   --color-hover: #1c2128;
   --color-muted: #6e7681;
   --color-input-bg: #21262d;
+  --color-border-card: rgba(255, 255, 255, 0.07);
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
 }

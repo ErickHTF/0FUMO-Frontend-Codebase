@@ -212,8 +212,7 @@ export const SignUpScreen = ({ onComplete, onLogin, onboardingData, isDarkMode, 
                     value={password}
                     onChange={e => { setPassword(e.target.value); setFieldErrors(p => ({ ...p, password: '' })); }}
                     placeholder="Mínimo 8 caracteres"
-                    className={`signup__field-input${password && strength === 1 ? ' signup__field-input--error' : password && strength >= 2 ? ' signup__field-input--success' : ''}`}
-                    style={{ paddingRight: '44px' }}
+                    className={`signup__field-input signup__field-input--password${password && strength === 1 ? ' signup__field-input--error' : password && strength >= 2 ? ' signup__field-input--success' : ''}`}
                     autoComplete="new-password"
                   />
                   <button type="button" onClick={() => setShowPassword(v => !v)} className="signup__password-toggle">

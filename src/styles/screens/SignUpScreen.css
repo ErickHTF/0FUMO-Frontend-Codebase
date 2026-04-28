@@ -309,6 +309,10 @@
   outline: none;
 }
 
+.signup__field-input--password {
+  padding-right: 44px;
+}
+
 .signup__field-input:hover {
   border-color: var(--color-primary);
   background: var(--color-input-bg);
