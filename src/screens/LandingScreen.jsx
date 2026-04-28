@@ -1,9 +1,9 @@
 import React from 'react';
-import { Icon } from '../../lib/icons';
-import { Card } from '../ui/Card';
-import heroDesktop from '../../assets/desktop.jpeg';
-import heroMobile from '../../assets/mobile.png';
-import '../../styles/screens/LandingScreen.css';
+import { Icon } from '../lib/icons';
+import { Card } from '../components/ui/Card';
+import heroDesktop from '../assets/desktop.jpeg';
+import heroMobile from '../assets/mobile.png';
+import './LandingScreen.css';
 
 export const LandingScreen = ({ onStart, onLogin }) => {
   const [methodologyOpen, setMethodologyOpen] = React.useState(false);

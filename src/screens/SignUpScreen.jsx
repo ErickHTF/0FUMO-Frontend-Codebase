@@ -1,7 +1,7 @@
 import React from 'react';
-import { Icon } from '../../lib/icons';
-import { Auth } from '../../lib/api';
-import '../../styles/screens/SignUpScreen.css';
+import { Icon } from '../lib/icons';
+import { Auth } from '../lib/api';
+import './SignUpScreen.css';
 
 const getPasswordStrength = (pw) => {
   if (pw.length === 0) return 0;

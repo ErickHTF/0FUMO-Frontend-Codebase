@@ -1,8 +1,8 @@
 import React from 'react';
-import { Icon } from '../../lib/icons';
-import { Card, PageTitle } from '../ui/Card';
-import { Users } from '../../lib/api';
-import '../../styles/screens/SettingsScreen.css';
+import { Icon } from '../lib/icons';
+import { Card, PageTitle } from '../components/ui/Card';
+import { Users } from '../lib/api';
+import './SettingsScreen.css';
 
 const Toggle = ({ checked, onChange }) => (
   <button

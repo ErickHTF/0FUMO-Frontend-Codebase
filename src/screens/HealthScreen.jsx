@@ -1,8 +1,8 @@
 import React from 'react';
-import { Icon } from '../../lib/icons';
-import { Card, PageTitle } from '../ui/Card';
-import { getStoredUser } from '../../lib/api';
-import '../../styles/screens/HealthScreen.css';
+import { Icon } from '../lib/icons';
+import { Card, PageTitle } from '../components/ui/Card';
+import { getStoredUser } from '../lib/api';
+import './HealthScreen.css';
 
 function getElapsed(isoString) {
   if (!isoString) return { hours: 0, days: 0 };

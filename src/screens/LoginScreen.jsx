@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '../../lib/icons';
-import { Auth, saveSession } from '../../lib/api';
-import '../../styles/screens/LoginScreen.css';
+import { Icon } from '../lib/icons';
+import { Auth, saveSession } from '../lib/api';
+import './LoginScreen.css';
 
 const GoogleIcon = () => (
   <svg className="login__social-icon" viewBox="0 0 18 18" fill="none">

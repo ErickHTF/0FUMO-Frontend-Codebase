@@ -76,5 +76,16 @@ export const Events = {
 
   stats: () => apiFetch('/events/stats'),
 
+  /** Insight 1 — Mapa de calor: [{ hour, dayOfWeek, context, count, avgIntensity }] */
+  heatmap: () => apiFetch('/events/heatmap'),
+
+  /** Insight 3 — Correlação recaídas: { cravingContextPercentages, relapseContextPercentages, highRiskContexts, totalRelapses, totalCravings } */
+  relapseCorrelation: () => apiFetch('/events/relapse-correlation'),
+
   remove: (id) => apiFetch(`/events/${id}`, { method: 'DELETE' }),
+};
+
+export const Insights = {
+  /** Insight 4 — Projeção financeira: { savedAmount, cigarettesAvoided, daysSmokeFreee, milestones, dailySaving } */
+  financialProjection: () => apiFetch('/users/me/financial-projection'),
 };

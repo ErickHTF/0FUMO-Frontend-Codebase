@@ -1,8 +1,8 @@
 import React from 'react';
-import { Icon } from '../../lib/icons';
-import { Card, PageTitle } from '../ui/Card';
-import { Events } from '../../lib/api';
-import '../../styles/screens/TriggersScreen.css';
+import { Icon } from '../lib/icons';
+import { Card, PageTitle } from '../components/ui/Card';
+import { Events } from '../lib/api';
+import './TriggersScreen.css';
 
 // Accent muted/burnt — harmonia com o verde
 const TYPE_COLORS = {

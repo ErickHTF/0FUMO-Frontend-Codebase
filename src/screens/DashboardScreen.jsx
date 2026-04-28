@@ -1,8 +1,8 @@
 import React from 'react';
-import { Icon } from '../../lib/icons';
-import { Card, PageTitle } from '../ui/Card';
-import { Events, getStoredUser } from '../../lib/api';
-import '../../styles/screens/DashboardScreen.css';
+import { Icon } from '../lib/icons';
+import { Card, PageTitle } from '../components/ui/Card';
+import { Events, getStoredUser } from '../lib/api';
+import './DashboardScreen.css';
 
 const PACK_PRICE = { r5_8: 6.5, r9_12: 10.5, r13_16: 14.5, r17plus: 19 };
 const CIGS_PER_PACK = 20;

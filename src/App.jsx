@@ -1,16 +1,17 @@
 import React from 'react';
 import { Routes, Route, Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { AppShell } from './components/Shell';
-import { LandingScreen } from './components/screens/LandingScreen';
-import { OnboardingScreen } from './components/screens/OnboardingScreen';
-import { SignUpScreen } from './components/screens/SignUpScreen';
-import { LoginScreen } from './components/screens/LoginScreen';
-import { DashboardScreen } from './components/screens/DashboardScreen';
-import { HealthScreen } from './components/screens/HealthScreen';
-import { TriggersScreen } from './components/screens/TriggersScreen';
-import { RelaxationScreen } from './components/screens/RelaxationScreen';
-import { CommunityScreen } from './components/screens/CommunityScreen';
-import { SettingsScreen } from './components/screens/SettingsScreen';
+import { LandingScreen } from './screens/LandingScreen';
+import { OnboardingScreen } from './screens/OnboardingScreen';
+import { SignUpScreen } from './screens/SignUpScreen';
+import { LoginScreen } from './screens/LoginScreen';
+import { DashboardScreen } from './screens/DashboardScreen';
+import { HealthScreen } from './screens/HealthScreen';
+import { TriggersScreen } from './screens/TriggersScreen';
+import { RelaxationScreen } from './screens/RelaxationScreen';
+import { LaboratoryScreen } from './screens/LaboratoryScreen';
+import { CommunityScreen } from './screens/CommunityScreen';
+import { SettingsScreen } from './screens/SettingsScreen';
 import { saveSession, clearSession, getStoredUser, getToken, Users } from './lib/api';
 
 // ── Limpa keys legadas da versão antiga (state-based routing) ─
@@ -22,6 +23,7 @@ const PATH_TO_PAGE = {
   '/saude':      'saude',
   '/gatilhos':   'gatilhos',
   '/relaxar':    'relaxar',
+  '/laboratorio': 'laboratorio',
   '/comunidade': 'comunidade',
   '/config':     'config',
 };
@@ -119,6 +121,7 @@ function App() {
             <Route path="/saude"      element={<HealthScreen />} />
             <Route path="/gatilhos"   element={<TriggersScreen />} />
             <Route path="/relaxar"    element={<RelaxationScreen />} />
+            <Route path="/laboratorio" element={<LaboratoryScreen />} />
             <Route path="/comunidade" element={<CommunityScreen />} />
             <Route path="/config"     element={<SettingsScreen user={user} onDeleteAccount={handleLogout} onUserUpdate={handleUserUpdate} />} />
           </Route>

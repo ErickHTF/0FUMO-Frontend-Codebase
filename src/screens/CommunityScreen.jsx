@@ -1,7 +1,7 @@
 import React from 'react';
-import { Icon } from '../../lib/icons';
-import { Card, PageTitle } from '../ui/Card';
-import '../../styles/screens/CommunityScreen.css';
+import { Icon } from '../lib/icons';
+import { Card, PageTitle } from '../components/ui/Card';
+import './CommunityScreen.css';
 
 export const CommunityScreen = () => {
   const [tab, setTab] = React.useState('feed');

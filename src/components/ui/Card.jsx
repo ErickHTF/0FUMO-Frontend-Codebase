@@ -1,4 +1,4 @@
-import '../../styles/components/Card.css';
+import './Card.css';
 
 export const Card = ({ children, className = '', style }) => (
   <div style={style} className={`card${className ? ` ${className}` : ''}`}>
