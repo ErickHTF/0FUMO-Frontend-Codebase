@@ -6,9 +6,34 @@
   position: relative;
 }
 
+.onboarding__topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
 .onboarding__brand {
   text-align: center;
-  margin-bottom: 40px;
+  flex: 1;
+}
+
+.onboarding__theme-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.onboarding__theme-btn:hover {
+  background: var(--color-hover);
+  transform: rotate(20deg);
 }
 
 .onboarding__brand-name {

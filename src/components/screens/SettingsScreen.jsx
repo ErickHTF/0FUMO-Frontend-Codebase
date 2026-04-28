@@ -13,43 +13,70 @@ const Toggle = ({ checked, onChange }) => (
   </button>
 );
 
-export const SettingsScreen = ({ user, onDeleteAccount }) => {
+function toDateInput(isoString) {
+  if (!isoString) return '';
+  return isoString.slice(0, 10); // "2024-01-15T..." → "2024-01-15"
+}
+
+export const SettingsScreen = ({ user, onDeleteAccount, onUserUpdate }) => {
   const [tab, setTab] = React.useState('privacidade');
   const [settings, setSettings] = React.useState({
     modoAnonimo: true,
     diarioPrivado: true,
     notificacoes: true,
     som: true,
-    compartilharProgresso: false,
   });
   const [guardians, setGuardians] = React.useState([
     { id: 1, name: 'Mariana S.', avatar: 'M', color: '#3B82F6' },
     { id: 2, name: 'Carlos (Padrinho)', avatar: 'C', color: '#10B981' },
   ]);
 
-  const updateSetting = (key, value) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+  // Quit date state
+  const [quitDate, setQuitDate] = React.useState(() => toDateInput(user?.quitDate));
+  const [quitDateSaving, setQuitDateSaving] = React.useState(false);
+  const [quitDateMsg, setQuitDateMsg] = React.useState('');
+
+  // Sync quit date if user prop updates
+  React.useEffect(() => {
+    setQuitDate(toDateInput(user?.quitDate));
+  }, [user?.quitDate]);
+
+  const updateSetting = (key, value) => setSettings(prev => ({ ...prev, [key]: value }));
+  const removeGuardian = (id) => setGuardians(prev => prev.filter(g => g.id !== id));
+
+  const handleSaveQuitDate = async () => {
+    if (!quitDate) return;
+    setQuitDateSaving(true);
+    setQuitDateMsg('');
+    try {
+      const updatedUser = await Users.updateQuitDate(quitDate);
+      onUserUpdate?.(updatedUser);
+      setQuitDateMsg('Salvo!');
+      setTimeout(() => setQuitDateMsg(''), 3000);
+    } catch {
+      setQuitDateMsg('Erro ao salvar.');
+    } finally {
+      setQuitDateSaving(false);
+    }
   };
 
-  const removeGuardian = (id) => {
-    setGuardians(prev => prev.filter(g => g.id !== id));
-  };
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="settings">
       <aside className="settings__sidebar">
         <div className="settings__nav">
           {[
-            { id: 'privacidade', label: 'Privacidade', icon: 'Lock' },
+            { id: 'privacidade',  label: 'Privacidade',  icon: 'Lock' },
             { id: 'notificacoes', label: 'Notificações', icon: 'Bell' },
-            { id: 'conta', label: 'Conta', icon: 'User' },
+            { id: 'conta',        label: 'Conta',        icon: 'User' },
           ].map(item => (
             <button
               key={item.id}
               onClick={() => setTab(item.id)}
               className={`settings__nav-btn${tab === item.id ? ' settings__nav-btn--active' : ''}`}
             >
-              <Icon name={item.icon} size={18} color={tab === item.id ? 'var(--color-primary)' : '#999'} />
+              <Icon name={item.icon} size={18} color={tab === item.id ? 'var(--color-primary)' : 'var(--color-muted)'} />
               {item.label}
             </button>
           ))}
@@ -104,12 +131,10 @@ export const SettingsScreen = ({ user, onDeleteAccount }) => {
                 <p className="buddy__desc">Gerencie quem pode receber alertas de SOS quando você estiver enfrentando uma fissura forte.</p>
                 {guardians.map(guardian => (
                   <div key={guardian.id} className="buddy__row">
-                    <div className="buddy__avatar" style={{ '--avatar-color': guardian.color }}>
-                      {guardian.avatar}
-                    </div>
+                    <div className="buddy__avatar" style={{ '--avatar-color': guardian.color }}>{guardian.avatar}</div>
                     <span className="buddy__name">{guardian.name}</span>
                     <button onClick={() => removeGuardian(guardian.id)} className="buddy__remove-btn">
-                      <Icon name="X" size={18} color="#999" />
+                      <Icon name="X" size={18} color="var(--color-muted)" />
                     </button>
                   </div>
                 ))}
@@ -123,29 +148,28 @@ export const SettingsScreen = ({ user, onDeleteAccount }) => {
         )}
 
         {tab === 'notificacoes' && (
-          <div>
-            <Card className="card--mb-24">
-              <h3 className="account__section-title">Notificações</h3>
-              <div className="notif-row notif-row--border">
-                <div>
-                  <div className="notif-row__title">Ativar notificações</div>
-                  <div className="notif-row__sub">Receba lembretes e motivação</div>
-                </div>
-                <Toggle checked={settings.notificacoes} onChange={() => updateSetting('notificacoes', !settings.notificacoes)} />
+          <Card className="card--mb-24">
+            <h3 className="account__section-title">Notificações</h3>
+            <div className="notif-row notif-row--border">
+              <div>
+                <div className="notif-row__title">Ativar notificações</div>
+                <div className="notif-row__sub">Receba lembretes e motivação</div>
               </div>
-              <div className="notif-row">
-                <div>
-                  <div className="notif-row__title">Som nas notificações</div>
-                  <div className="notif-row__sub">Toque sonoro ao receber alertas</div>
-                </div>
-                <Toggle checked={settings.som} onChange={() => updateSetting('som', !settings.som)} />
+              <Toggle checked={settings.notificacoes} onChange={() => updateSetting('notificacoes', !settings.notificacoes)} />
+            </div>
+            <div className="notif-row">
+              <div>
+                <div className="notif-row__title">Som nas notificações</div>
+                <div className="notif-row__sub">Toque sonoro ao receber alertas</div>
               </div>
-            </Card>
-          </div>
+              <Toggle checked={settings.som} onChange={() => updateSetting('som', !settings.som)} />
+            </div>
+          </Card>
         )}
 
         {tab === 'conta' && (
           <div>
+            {/* Informações */}
             <Card className="card--mb-24">
               <h3 className="account__section-title">Informações da Conta</h3>
               <button className="account__email-btn">
@@ -164,6 +188,36 @@ export const SettingsScreen = ({ user, onDeleteAccount }) => {
               </button>
             </Card>
 
+            {/* Data de parada */}
+            <Card className="card--mb-24">
+              <h3 className="account__section-title">Data de Parada</h3>
+              <p className="account__data-desc">
+                Quando você parou de fumar? Isso determina os cálculos de progresso, saúde e economia.
+              </p>
+              <div className="quit-date-row">
+                <input
+                  type="date"
+                  value={quitDate}
+                  max={today}
+                  onChange={e => setQuitDate(e.target.value)}
+                  className="quit-date-input"
+                />
+                <button
+                  onClick={handleSaveQuitDate}
+                  disabled={quitDateSaving || !quitDate}
+                  className="quit-date-save-btn"
+                >
+                  {quitDateSaving ? 'Salvando…' : 'Salvar'}
+                </button>
+              </div>
+              {quitDateMsg && (
+                <p className={`quit-date-msg ${quitDateMsg === 'Salvo!' ? 'quit-date-msg--ok' : 'quit-date-msg--err'}`}>
+                  {quitDateMsg}
+                </p>
+              )}
+            </Card>
+
+            {/* Ações */}
             <Card className="card--mb-24">
               <h3 className="account__section-title">Seus Dados</h3>
               <p className="account__data-desc">Faça download do seu histórico ou solicite a exclusão permanente.</p>
@@ -176,11 +230,7 @@ export const SettingsScreen = ({ user, onDeleteAccount }) => {
                   className="account__delete-btn"
                   onClick={async () => {
                     if (!confirm('Tem certeza? Sua conta será excluída permanentemente.')) return;
-                    try {
-                      await Users.delete(user?.id);
-                    } finally {
-                      onDeleteAccount?.();
-                    }
+                    try { await Users.delete(user?.id); } finally { onDeleteAccount?.(); }
                   }}
                 >
                   <Icon name="Trash2" size={16} color="#DC2626" />

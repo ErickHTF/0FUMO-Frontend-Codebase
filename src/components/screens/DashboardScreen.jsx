@@ -7,27 +7,23 @@ import '../../styles/screens/DashboardScreen.css';
 const PACK_PRICE = { r5_8: 6.5, r9_12: 10.5, r13_16: 14.5, r17plus: 19 };
 const CIGS_PER_PACK = 20;
 
-function getDaysAndHours(isoString) {
+function getElapsed(isoString) {
   if (!isoString) return { days: 0, hours: 0, totalHours: 0 };
   const diff = Date.now() - new Date(isoString).getTime();
   const totalHours = Math.floor(diff / (1000 * 60 * 60));
-  const days = Math.floor(totalHours / 24);
-  const hours = totalHours % 24;
-  return { days, hours, totalHours };
+  return { days: Math.floor(totalHours / 24), hours: totalHours % 24, totalHours };
 }
 
 export const DashboardScreen = () => {
   const user = getStoredUser();
-  const { days, hours, totalHours } = getDaysAndHours(user?.createdAt);
 
-  const onboardingData = React.useMemo(() => {
-    try { return JSON.parse(localStorage.getItem('0fumo_onboarding_data')); } catch { return null; }
-  }, []);
+  const startDate = user?.quitDate || user?.createdAt;
+  const { days, hours, totalHours } = getElapsed(startDate);
 
-  const cigsPerDay = Number(onboardingData?.cigs) || 15;
-  const pricePerCig = (PACK_PRICE[onboardingData?.packCost] || 10.5) / CIGS_PER_PACK;
+  const cigsPerDay = user?.cigsPerDay || 15;
+  const pricePerCig = (PACK_PRICE[user?.packCostId] || 10.5) / CIGS_PER_PACK;
 
-  const [stats, setStats] = React.useState({ totalCravings: 0, cigarettesSmoked: 0, mostFrequentContext: null });
+  const [stats, setStats] = React.useState({ totalCravings: 0, cigarettesSmoked: 0 });
 
   React.useEffect(() => {
     Events.stats().then(setStats).catch(() => {});
@@ -37,7 +33,7 @@ export const DashboardScreen = () => {
   const money = Math.round(cigsAvoided * pricePerCig);
 
   const bloodCleanPct = Math.min(100, Math.round((totalHours / 8) * 100));
-  const tastePct = Math.min(100, Math.round((days / 2) * 100));
+  const tastePct = Math.min(100, Math.round((days / 30) * 100));
 
   return (
     <>
@@ -83,7 +79,7 @@ export const DashboardScreen = () => {
             <div className="stat-card__value">{cigsAvoided}</div>
             <div className="stat-card__desc">
               {stats.cigarettesSmoked > 0
-                ? `${stats.cigarettesSmoked} registrado${stats.cigarettesSmoked > 1 ? 's' : ''} como fumado`
+                ? `${stats.cigarettesSmoked} fumado${stats.cigarettesSmoked > 1 ? 's' : ''} registrado${stats.cigarettesSmoked > 1 ? 's' : ''}`
                 : 'Seus pulmões agradecem'}
             </div>
           </Card>
@@ -98,7 +94,7 @@ export const DashboardScreen = () => {
           </div>
           {[
             { label: 'Seu sangue está mais limpo', pct: bloodCleanPct, desc: `Baseado em ${totalHours}h sem fumar` },
-            { label: 'Sabores e aromas voltando', pct: tastePct, desc: 'Nervos se regenerando' },
+            { label: 'Sabores e aromas voltando', pct: tastePct, desc: 'Nervos sensoriais se regeneram em ~30 dias' },
           ].map((item, i) => (
             <div key={i} className="recovery__item">
               <div className="recovery__item-row">
@@ -127,7 +123,6 @@ export const DashboardScreen = () => {
               <Icon name="Trophy" size={18} color="#F59E0B" />
               <h3 className="achievements__title">Conquistas</h3>
             </div>
-            <span className="achievements__see-all">Ver todas</span>
           </div>
           <div className="achievements__row">
             {[

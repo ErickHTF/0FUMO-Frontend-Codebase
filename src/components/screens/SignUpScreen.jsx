@@ -28,7 +28,7 @@ const AppleIcon = () => (
   </svg>
 );
 
-export const SignUpScreen = ({ onComplete, onLogin, onboardingData }) => {
+export const SignUpScreen = ({ onComplete, onLogin, onboardingData, isDarkMode, onToggleDarkMode }) => {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -136,7 +136,12 @@ export const SignUpScreen = ({ onComplete, onLogin, onboardingData }) => {
       <div className="signup__right">
         <div className="signup__form-wrap">
           <div className="signup__form-header">
-            <h2 className="signup__form-title">Crie sua conta gratuita</h2>
+            <div className="signup__form-topbar">
+              <h2 className="signup__form-title">Crie sua conta gratuita</h2>
+              <button onClick={onToggleDarkMode} className="signup__theme-btn" aria-label="Alternar modo escuro">
+                <Icon name={isDarkMode ? 'Sun' : 'Moon'} size={17} color="var(--color-text-secondary)" />
+              </button>
+            </div>
             <p className="signup__form-sub">Tudo pronto. Só falta você.</p>
           </div>
 

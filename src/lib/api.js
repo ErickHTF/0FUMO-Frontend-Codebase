@@ -10,8 +10,15 @@ export function saveSession(data) {
 }
 
 export function clearSession() {
+  // Keys atuais
   localStorage.removeItem('0fumo_token');
   localStorage.removeItem('0fumo_user');
+  localStorage.removeItem('0fumo_onboarding_data');
+  // Keys legadas (versão antiga sem React Router)
+  localStorage.removeItem('0fumo_onboarded');
+  localStorage.removeItem('0fumo_activePage');
+  localStorage.removeItem('0fumo_onboarding_started');
+  localStorage.removeItem('0fumo_signup_pending');
 }
 
 export function getStoredUser() {
@@ -47,6 +54,12 @@ export const Auth = {
 
 export const Users = {
   me: () => apiFetch('/users/me'),
+
+  completeAssessment: (cigsPerDay, packCostId) =>
+    apiFetch('/users/me/assessment', { method: 'POST', body: JSON.stringify({ cigsPerDay, packCostId }) }),
+
+  updateQuitDate: (quitDate) =>
+    apiFetch('/users/me/quit-date', { method: 'PUT', body: JSON.stringify({ quitDate }) }),
 
   update: (id, name, email) =>
     apiFetch(`/users/${id}`, { method: 'PUT', body: JSON.stringify({ name, email }) }),

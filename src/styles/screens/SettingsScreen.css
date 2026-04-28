@@ -341,6 +341,71 @@
   background: rgba(220, 38, 38, 0.2);
 }
 
+/* ── Quit date ────────────────────────────────────────── */
+.quit-date-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.quit-date-input {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-border-input);
+  background: var(--color-input-bg);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.quit-date-input:focus {
+  border-color: var(--color-primary);
+}
+
+.quit-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.4);
+  cursor: pointer;
+}
+
+html.dark .quit-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+}
+
+.quit-date-save-btn {
+  padding: 9px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.quit-date-save-btn:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.quit-date-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quit-date-msg {
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.quit-date-msg--ok  { color: var(--color-primary); }
+.quit-date-msg--err { color: var(--color-error); }
+
 @media (max-width: 768px) {
   .settings { flex-direction: column; }
   .settings__sidebar { width: 100%; }

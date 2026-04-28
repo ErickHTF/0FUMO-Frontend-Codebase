@@ -139,7 +139,7 @@ const CheckBtn = ({ label, active, onClick }) => (
 // ── Main component ─────────────────────────────────────────
 const TOTAL_STEPS = 7;
 
-export const OnboardingScreen = ({ onComplete }) => {
+export const OnboardingScreen = ({ onComplete, isDarkMode, onToggleDarkMode }) => {
   const [step, setStep] = React.useState(0);
   const [toast, setToast] = React.useState(null);
 
@@ -256,9 +256,16 @@ export const OnboardingScreen = ({ onComplete }) => {
         </div>
       )}
 
-      <div className="onboarding__brand">
-        <div className="onboarding__brand-name">0 Fumo</div>
-        {step === 0 && <div className="onboarding__brand-sub">Sua jornada começa aqui. Vamos juntos.</div>}
+      <div className="onboarding__topbar">
+        <div className="onboarding__brand">
+          <div className="onboarding__brand-name">0 Fumo</div>
+          {step === 0 && <div className="onboarding__brand-sub">Sua jornada começa aqui. Vamos juntos.</div>}
+        </div>
+        {onToggleDarkMode && (
+          <button onClick={onToggleDarkMode} className="onboarding__theme-btn" aria-label="Alternar modo escuro">
+            <Icon name={isDarkMode ? 'Sun' : 'Moon'} size={18} color="var(--color-text-secondary)" />
+          </button>
+        )}
       </div>
 
       {step < TOTAL_STEPS && (
