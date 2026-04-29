@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Events } from '../../lib/api';
+import { Events, getStoredUser } from '../../lib/api';
 import './HeatmapDemo.css';
 
 const DAY_ORDER = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
@@ -11,7 +11,17 @@ const DAY_FULL_PT = {
   MONDAY: 'segundas-feiras', TUESDAY: 'terças-feiras', WEDNESDAY: 'quartas-feiras',
   THURSDAY: 'quintas-feiras', FRIDAY: 'sextas-feiras', SATURDAY: 'sábados', SUNDAY: 'domingos',
 };
+const DAY_SINGULAR_PT = {
+  MONDAY: 'Segunda-feira', TUESDAY: 'Terça-feira', WEDNESDAY: 'Quarta-feira',
+  THURSDAY: 'Quinta-feira', FRIDAY: 'Sexta-feira', SATURDAY: 'Sábado', SUNDAY: 'Domingo',
+};
+
+function nudgeTime(hourStr) {
+  const h = parseInt(hourStr, 10);
+  return h === 0 ? '23h45' : `${h - 1}h45`;
+}
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+const PERIOD_LABELS = { '00': 'Madrugada', '06': 'Manhã', '12': 'Tarde', '18': 'Noite' };
 
 function buildValueMap(apiData) {
   const map = {};
@@ -43,23 +53,87 @@ function getLevel(value, max) {
   return 8;
 }
 
+function computeStats(map) {
+  const hourTotals = {};
+  const dayTotals = {};
+  HOURS.forEach(h => { hourTotals[h] = 0; });
+  DAY_ORDER.forEach(d => { dayTotals[d] = 0; });
+
+  Object.entries(map).forEach(([key, cell]) => {
+    const [day, hour] = key.split('_');
+    hourTotals[hour] = (hourTotals[hour] || 0) + cell.count;
+    dayTotals[day] = (dayTotals[day] || 0) + cell.count;
+  });
+
+  const sortedHours = Object.entries(hourTotals).sort((a, b) => b[1] - a[1]);
+  const peakHour = sortedHours[0];
+  const quietHours = HOURS.filter(h => hourTotals[h] === 0).slice(0, 4);
+  const peakDay = Object.entries(dayTotals).sort((a, b) => b[1] - a[1])[0];
+  const totalCravings = Object.values(hourTotals).reduce((s, v) => s + v, 0);
+
+  return { peakHour, quietHours, peakDay, totalCravings };
+}
+
+const MONTH_PT = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+function getMonthOptions(sinceDate) {
+  const options = [{ year: null, month: null, label: 'Todos' }];
+  const now = new Date();
+  const since = sinceDate ? new Date(sinceDate) : now;
+  const sinceYear = since.getFullYear();
+  const sinceMonth = since.getMonth(); // 0-indexed
+
+  for (let i = 0; i <= 120; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    if (d.getFullYear() < sinceYear || (d.getFullYear() === sinceYear && d.getMonth() < sinceMonth)) break;
+    options.push({
+      year: d.getFullYear(),
+      month: d.getMonth() + 1,
+      label: `${MONTH_PT[d.getMonth()]} ${d.getFullYear()}`,
+    });
+  }
+  return options;
+}
+
 export const HeatmapDemo = ({ refreshKey = 0 }) => {
   const [apiData, setApiData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hovered, setHovered] = useState({ hour: null, day: null });
+  const [period, setPeriod] = useState({ year: null, month: null });
+
+  const monthOptions = getMonthOptions(getStoredUser()?.createdAt);
 
   useEffect(() => {
     setLoading(true);
-    Events.heatmap()
+    Events.heatmap(period.year, period.month)
       .then(setApiData)
       .catch(() => setApiData(null))
       .finally(() => setLoading(false));
-  }, [refreshKey]);
+  }, [refreshKey, period.year, period.month]);
+
+  const ChipsRow = () => (
+    <div className="heatmap__months">
+      {monthOptions.map((opt) => {
+        const active = opt.year === period.year && opt.month === period.month;
+        return (
+          <button
+            key={opt.label}
+            className={`heatmap__month-chip${active ? ' heatmap__month-chip--active' : ''}`}
+            onClick={() => setPeriod({ year: opt.year, month: opt.month })}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
 
   if (loading) {
     return (
       <section className="heatmap">
-        <div className="heatmap__title">Desejos Registrados por Hora</div>
+        <div className="heatmap__title">Mapa de Vulnerabilidade</div>
         <div className="heatmap__empty">Carregando dados...</div>
+        <ChipsRow />
       </section>
     );
   }
@@ -67,13 +141,15 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
   if (!apiData || apiData.length === 0) {
     return (
       <section className="heatmap">
-        <div className="heatmap__title">Desejos Registrados por Hora</div>
+        <div className="heatmap__title">Mapa de Vulnerabilidade</div>
         <div className="heatmap__empty">Nenhum dado registrado ainda.</div>
+        <ChipsRow />
       </section>
     );
   }
 
   const { map, max } = buildValueMap(apiData);
+  const stats = computeStats(map);
 
   const peakEntry = Object.entries(map).reduce((best, [key, cell]) =>
     cell.count > (best?.cell?.count || 0) ? { key, cell } : best, null);
@@ -82,14 +158,15 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
 
   return (
     <section className="heatmap">
-      <div className="heatmap__title">Desejos Registrados por Hora</div>
+      <div className="heatmap__title">Mapa de Vulnerabilidade</div>
 
       {peakDay && (
         <div className="heatmap__toast">
+          <span className="heatmap__toast-icon">💡</span>
           <p className="heatmap__toast-text">
-            Pico às <span className="heatmap__badge">{peakHour}h</span>{' '}
-            nas <span className="heatmap__badge">{DAY_FULL_PT[peakDay]}</span>
-            {peakContext && <> · gatilho: <span className="heatmap__badge">{peakContext}</span></>}.{' '}
+            Pico às <span className="heatmap__badge heatmap__badge--alert">{peakHour}h</span>{' '}
+            nas <span className="heatmap__badge heatmap__badge--alert">{DAY_FULL_PT[peakDay]}</span>
+            {peakContext && <> · gatilho: <span className="heatmap__badge heatmap__badge--alert">{peakContext}</span></>}.{' '}
             Quebre o padrão <strong>15 min antes</strong> desse horário.
           </p>
         </div>
@@ -103,11 +180,21 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
         </div>
 
         <div className="heatmap__y-axis">
-          {HOURS.map((h, i) => (
-            <span key={h} className={`heatmap__y-label ${i % 2 === 0 ? '' : 'heatmap__y-label--muted'}`}>
-              {h}h
-            </span>
-          ))}
+          {HOURS.map((h, i) => {
+            const isBoundary = PERIOD_LABELS[h] !== undefined;
+            return (
+              <span
+                key={h}
+                className={[
+                  'heatmap__y-label',
+                  isBoundary ? 'heatmap__y-label--boundary' : '',
+                  i % 2 !== 0 ? 'heatmap__y-label--muted' : '',
+                ].join(' ')}
+              >
+                {isBoundary ? PERIOD_LABELS[h] : `${h}h`}
+              </span>
+            );
+          })}
         </div>
 
         <div className="heatmap__grid">
@@ -117,16 +204,28 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
               const cell = map[key];
               const count = cell?.count || 0;
               const level = getLevel(count, max);
+              const isBoundary = PERIOD_LABELS[h] !== undefined;
+              const isRowHl = hovered.hour === h;
+              const isColHl = hovered.day === day;
+              const isActive = isRowHl && isColHl;
               const tooltip = count > 0
-                ? `${count} ${count === 1 ? 'desejo' : 'desejos'} • ${DAY_PT[day]} ${h}h${cell?.topContext ? ` • ${cell.topContext}` : ''}${cell?.avgIntensity ? ` • intensidade média ${cell.avgIntensity.toFixed(1)}` : ''}`
+                ? `${count} ${count === 1 ? 'desejo' : 'desejos'} · ${DAY_PT[day]} ${h}h${cell?.topContext ? ` · ${cell.topContext}` : ''}${cell?.avgIntensity ? ` · intensidade média ${cell.avgIntensity.toFixed(1)}` : ''}`
                 : `${DAY_PT[day]} ${h}h — sem registros`;
               return (
                 <div
                   key={key}
-                  className={`heatmap__cell heatmap__cell--l${level}`}
+                  className={[
+                    'heatmap__cell',
+                    `heatmap__cell--l${level}`,
+                    isBoundary ? 'heatmap__cell--boundary-row' : '',
+                    (isRowHl || isColHl) && !isActive ? 'heatmap__cell--hl' : '',
+                    isActive ? 'heatmap__cell--active' : '',
+                  ].join(' ')}
                   title={tooltip}
                   aria-label={tooltip}
                   role="img"
+                  onMouseEnter={() => setHovered({ hour: h, day })}
+                  onMouseLeave={() => setHovered({ hour: null, day: null })}
                 />
               );
             })
@@ -135,38 +234,61 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
       </div>
 
       <div className="heatmap__legend">
-        <span className="heatmap__legend-label">Menos</span>
+        <span className="heatmap__legend-label">Sem registro</span>
         <div className="heatmap__legend-scale">
           {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((l) => (
             <span key={l} className={`heatmap__legend-dot heatmap__cell--l${l}`} />
           ))}
         </div>
-        <span className="heatmap__legend-label">Mais</span>
+        <span className="heatmap__legend-label">Alta frequência</span>
       </div>
 
+      <div className="heatmap__insights">
+        {stats.peakHour && stats.peakHour[1] > 0 && (
+          <div className="heatmap__insight-card heatmap__insight-card--alert">
+            <span className="heatmap__insight-label">Seu Ponto Crítico</span>
+            <span className="heatmap__insight-value">
+              Às {stats.peakHour[0]}h a vontade aperta. Você já lidou com isso {stats.totalCravings} {stats.totalCravings === 1 ? 'vez' : 'vezes'}.
+            </span>
+            <span className="heatmap__insight-nudge">
+              Agende uma Respiração 4-7-8 para as {nudgeTime(stats.peakHour[0])}. Antecipe o gatilho.
+            </span>
+          </div>
+        )}
 
-      <div className="heatmap__caption">
-        <p className="heatmap__caption-title">Como ler seu mapa de vulnerabilidade</p>
-        <p className="heatmap__caption-body">
-          Este gráfico organiza cada registro de desejo que você teve. Quanto mais escuro o bloco,
-          maior a concentração de gatilhos naquele horário e dia específico.
-        </p>
-        <div className="heatmap__caption-zones">
-          <span className="heatmap__caption-zone heatmap__caption-zone--light">
-            <strong>Zonas Claras</strong> — Seus momentos de maior tranquilidade e controle.
-          </span>
-          <span className="heatmap__caption-zone heatmap__caption-zone--dark">
-            <strong>Zonas Escuras</strong> — Seus "pontos críticos". São janelas onde sua rotina ou ambiente estão facilitando a vontade de fumar.
-          </span>
-          <span className="heatmap__caption-zone">
-            <strong>Contexto</strong> — Passe o mouse sobre qualquer bloco para ver qual foi o motivo principal e a intensidade média.
-          </span>
-        </div>
+        {stats.peakDay && stats.peakDay[1] > 0 && (
+          <div className="heatmap__insight-card heatmap__insight-card--alert">
+            <span className="heatmap__insight-label">Onde a Vontade Aperta</span>
+            <span className="heatmap__insight-value">
+              {DAY_SINGULAR_PT[stats.peakDay[0]]} exige mais de você.
+            </span>
+            <span className="heatmap__insight-nudge">
+              {DAY_FULL_PT[stats.peakDay[0]].charAt(0).toUpperCase() + DAY_FULL_PT[stats.peakDay[0]].slice(1)} costumam ser pesadas. Beba mais água gelada hoje.
+            </span>
+          </div>
+        )}
+
+        {stats.quietHours.length > 0 ? (
+          <div className="heatmap__insight-card heatmap__insight-card--good">
+            <span className="heatmap__insight-label">Seu Porto Seguro</span>
+            <span className="heatmap__insight-value">
+              Suas ilhas de paz: {stats.quietHours.map(h => `${h}h`).join(' · ')}.
+            </span>
+            <span className="heatmap__insight-nudge">
+              Nesses momentos você está no controle. Respire fundo e recarregue.
+            </span>
+          </div>
+        ) : (
+          <div className="heatmap__insight-card heatmap__insight-card--good">
+            <span className="heatmap__insight-label">Seu Porto Seguro</span>
+            <span className="heatmap__insight-value">
+              Continue registrando para revelar seus momentos de paz.
+            </span>
+          </div>
+        )}
       </div>
 
-      <p className="heatmap__footer">
-        "Sua jornada não é linear, mas possui padrões. Identificar suas zonas críticas é o primeiro passo para antecipar a vontade e retomar o controle."
-      </p>
+      <ChipsRow />
     </section>
   );
 };
