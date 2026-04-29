@@ -64,9 +64,8 @@
   grid-row: 2;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(24, 1fr);
+  grid-template-rows: repeat(24, 18px);
   gap: 4px;
-  height: 360px;
 }
 
 .heatmap__cell {
@@ -81,15 +80,26 @@
   box-shadow: 0 6px 16px rgba(120, 56, 36, 0.2);
 }
 
-.heatmap__cell--l0 { --heatmap-color: #F6EFEA; }
-.heatmap__cell--l1 { --heatmap-color: #F1E0D7; }
-.heatmap__cell--l2 { --heatmap-color: #EACFC0; }
-.heatmap__cell--l3 { --heatmap-color: #E0B7A1; }
-.heatmap__cell--l4 { --heatmap-color: #D69A7D; }
-.heatmap__cell--l5 { --heatmap-color: #C97D5C; }
-.heatmap__cell--l6 { --heatmap-color: #B66545; }
-.heatmap__cell--l7 { --heatmap-color: #9F5236; }
-.heatmap__cell--l8 { --heatmap-color: #863D2A; }
+/* Light: vazio → verde sálvia → ocre → terracota */
+.heatmap__cell--l0 { --heatmap-color: var(--color-hover); }
+.heatmap__cell--l1 { --heatmap-color: #D6E9DC; }
+.heatmap__cell--l2 { --heatmap-color: #B3D4BC; }
+.heatmap__cell--l3 { --heatmap-color: #84B896; }
+.heatmap__cell--l4 { --heatmap-color: #D4BF8C; }
+.heatmap__cell--l5 { --heatmap-color: #C9A472; }
+.heatmap__cell--l6 { --heatmap-color: #BC8968; }
+.heatmap__cell--l7 { --heatmap-color: #A86B52; }
+.heatmap__cell--l8 { --heatmap-color: #8C503C; }
+
+/* Dark */
+html.dark .heatmap__cell--l1 { --heatmap-color: #1A3324; }
+html.dark .heatmap__cell--l2 { --heatmap-color: #1E422E; }
+html.dark .heatmap__cell--l3 { --heatmap-color: #235638; }
+html.dark .heatmap__cell--l4 { --heatmap-color: #3D3016; }
+html.dark .heatmap__cell--l5 { --heatmap-color: #4A341A; }
+html.dark .heatmap__cell--l6 { --heatmap-color: #4D2C1E; }
+html.dark .heatmap__cell--l7 { --heatmap-color: #52231A; }
+html.dark .heatmap__cell--l8 { --heatmap-color: #581C14; }
 
 .heatmap__legend {
   display: flex;
@@ -115,6 +125,112 @@
   white-space: nowrap;
 }
 
+/* ── Toast insight ─────────────────────────────────────── */
+.heatmap__toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 10px;
+  animation: heatmap-toast-in 0.3s ease;
+}
+
+@keyframes heatmap-toast-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.heatmap__toast-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.heatmap__toast-text {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.heatmap__toast-text strong {
+  color: var(--color-text-primary);
+}
+
+.heatmap__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+/* ── Caption educativa ─────────────────────────────────── */
+.heatmap__caption {
+  padding: 16px;
+  background: var(--color-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.heatmap__caption-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.heatmap__caption-body {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.heatmap__caption-zones {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.heatmap__caption-zone {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  padding-left: 10px;
+  border-left: 2px solid var(--color-border);
+}
+
+.heatmap__caption-zone--light {
+  border-left-color: #F1E0D7;
+}
+
+.heatmap__caption-zone--dark {
+  border-left-color: #863D2A;
+}
+
+/* ── Rodapé ─────────────────────────────────────────────── */
+.heatmap__footer {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin: 0;
+  opacity: 0.7;
+}
+
 .heatmap__source {
   text-align: right;
   font-size: 12px;
@@ -130,18 +246,12 @@
   text-decoration: underline;
 }
 
-@media (max-width: 900px) {
-  .heatmap__grid {
-    height: 320px;
-  }
-}
-
 @media (max-width: 600px) {
   .heatmap__chart {
     grid-template-columns: 44px 1fr;
   }
   .heatmap__grid {
-    height: 300px;
+    grid-template-rows: repeat(24, 14px);
   }
   .heatmap__x-label {
     transform: rotate(-25deg);

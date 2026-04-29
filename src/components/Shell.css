@@ -264,6 +264,16 @@
   cursor: not-allowed;
 }
 
+.modal-submit-btn--danger {
+  background: #DC2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+.modal-submit-btn--danger:hover:not(:disabled) {
+  background: #B91C1C;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+}
+
 /* ── Sidebar ──────────────────────────────────────────── */
 .sidebar {
   width: 220px;

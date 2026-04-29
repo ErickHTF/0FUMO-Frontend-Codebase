@@ -7,6 +7,10 @@ const DAY_PT = {
   MONDAY: 'Seg', TUESDAY: 'Ter', WEDNESDAY: 'Qua',
   THURSDAY: 'Qui', FRIDAY: 'Sex', SATURDAY: 'Sáb', SUNDAY: 'Dom',
 };
+const DAY_FULL_PT = {
+  MONDAY: 'segundas-feiras', TUESDAY: 'terças-feiras', WEDNESDAY: 'quartas-feiras',
+  THURSDAY: 'quintas-feiras', FRIDAY: 'sextas-feiras', SATURDAY: 'sábados', SUNDAY: 'domingos',
+};
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
 
 function buildValueMap(apiData) {
@@ -54,7 +58,7 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
   if (loading) {
     return (
       <section className="heatmap">
-        <div className="heatmap__title">Mapa de Calor — Desejos por Hora</div>
+        <div className="heatmap__title">Desejos Registrados por Hora</div>
         <div className="heatmap__empty">Carregando dados...</div>
       </section>
     );
@@ -63,7 +67,7 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
   if (!apiData || apiData.length === 0) {
     return (
       <section className="heatmap">
-        <div className="heatmap__title">Mapa de Calor — Desejos por Hora</div>
+        <div className="heatmap__title">Desejos Registrados por Hora</div>
         <div className="heatmap__empty">Nenhum dado registrado ainda.</div>
       </section>
     );
@@ -71,9 +75,25 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
 
   const { map, max } = buildValueMap(apiData);
 
+  const peakEntry = Object.entries(map).reduce((best, [key, cell]) =>
+    cell.count > (best?.cell?.count || 0) ? { key, cell } : best, null);
+  const [peakDay, peakHour] = peakEntry?.key?.split('_') || [];
+  const peakContext = peakEntry?.cell?.topContext;
+
   return (
     <section className="heatmap">
-      <div className="heatmap__title">Mapa de Calor — Desejos por Hora</div>
+      <div className="heatmap__title">Desejos Registrados por Hora</div>
+
+      {peakDay && (
+        <div className="heatmap__toast">
+          <p className="heatmap__toast-text">
+            Pico às <span className="heatmap__badge">{peakHour}h</span>{' '}
+            nas <span className="heatmap__badge">{DAY_FULL_PT[peakDay]}</span>
+            {peakContext && <> · gatilho: <span className="heatmap__badge">{peakContext}</span></>}.{' '}
+            Quebre o padrão <strong>15 min antes</strong> desse horário.
+          </p>
+        </div>
+      )}
 
       <div className="heatmap__chart">
         <div className="heatmap__x-axis">
@@ -123,6 +143,30 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
         </div>
         <span className="heatmap__legend-label">Mais</span>
       </div>
+
+
+      <div className="heatmap__caption">
+        <p className="heatmap__caption-title">Como ler seu mapa de vulnerabilidade</p>
+        <p className="heatmap__caption-body">
+          Este gráfico organiza cada registro de desejo que você teve. Quanto mais escuro o bloco,
+          maior a concentração de gatilhos naquele horário e dia específico.
+        </p>
+        <div className="heatmap__caption-zones">
+          <span className="heatmap__caption-zone heatmap__caption-zone--light">
+            <strong>Zonas Claras</strong> — Seus momentos de maior tranquilidade e controle.
+          </span>
+          <span className="heatmap__caption-zone heatmap__caption-zone--dark">
+            <strong>Zonas Escuras</strong> — Seus "pontos críticos". São janelas onde sua rotina ou ambiente estão facilitando a vontade de fumar.
+          </span>
+          <span className="heatmap__caption-zone">
+            <strong>Contexto</strong> — Passe o mouse sobre qualquer bloco para ver qual foi o motivo principal e a intensidade média.
+          </span>
+        </div>
+      </div>
+
+      <p className="heatmap__footer">
+        "Sua jornada não é linear, mas possui padrões. Identificar suas zonas críticas é o primeiro passo para antecipar a vontade e retomar o controle."
+      </p>
     </section>
   );
 };

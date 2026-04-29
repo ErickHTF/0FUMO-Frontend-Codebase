@@ -20,6 +20,13 @@ export const LogCravingButton = ({ onClick }) => (
   </button>
 );
 
+const LogCigaretteButton = ({ onClick }) => (
+  <button onClick={onClick} className="log-cigarette-btn">
+    <Icon name="Cigarette" size={16} />
+    <span>Registrar Fumada</span>
+  </button>
+);
+
 export const CravingLogModal = ({ open, onClose }) => {
   const [intensity, setIntensity] = React.useState(3);
   const [trigger, setTrigger] = React.useState('');
@@ -119,8 +126,91 @@ export const CravingLogModal = ({ open, onClose }) => {
   );
 };
 
+const CigaretteLogModal = ({ open, onClose }) => {
+  const [context, setContext] = React.useState('');
+  const [note, setNote] = React.useState('');
+  const [submitted, setSubmitted] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+  const contexts = ['Ansiedade', 'Hábito', 'Social', 'Cansaço', 'Estresse', 'Tédio'];
+
+  React.useEffect(() => {
+    if (open) { setSubmitted(false); setContext(''); setNote(''); setError(''); }
+  }, [open]);
+
+  const handleRegister = async () => {
+    if (!context) { setError('Selecione o contexto'); return; }
+    setLoading(true);
+    setError('');
+    try {
+      await Events.create('CIGARETTE_SMOKED', null, context, note, new Date().toISOString());
+      setSubmitted(true);
+      window.dispatchEvent(new CustomEvent('craving-logged'));
+    } catch {
+      setError('Erro ao registrar. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} className="modal-box">
+        {submitted ? (
+          <div className="modal-success">
+            <div className="modal-success__icon">
+              <Icon name="Check" size={32} color="var(--color-primary)" />
+            </div>
+            <h3 className="modal-success__title">Registrado.</h3>
+            <p className="modal-success__text">Sem julgamentos. Cada registro é um dado que te ajuda a entender seus padrões.</p>
+            <button onClick={onClose} className="modal-success__close">Fechar</button>
+          </div>
+        ) : (
+          <>
+            <div className="modal-header">
+              <h3 className="modal-header__title">O que aconteceu?</h3>
+              <button onClick={onClose} className="modal-icon-btn">
+                <Icon name="X" size={20} color="#999" />
+              </button>
+            </div>
+            <label className="modal-field-label">Contexto</label>
+            <div className="modal-triggers-row">
+              {contexts.map(c => (
+                <button
+                  key={c}
+                  onClick={() => setContext(c)}
+                  className={`modal-trigger-btn ${context === c ? 'modal-trigger-btn--active' : 'modal-trigger-btn--inactive'}`}
+                >{c}</button>
+              ))}
+            </div>
+            <label className="modal-field-label">Observação (opcional)</label>
+            <textarea
+              value={note}
+              onChange={e => setNote(e.target.value)}
+              placeholder="O que estava acontecendo..."
+              className="modal-textarea"
+            />
+            {error && (
+              <div className="modal-error">
+                <Icon name="AlertCircle" size={14} color="#DC2626" />
+                {error}
+              </div>
+            )}
+            <button onClick={handleRegister} disabled={loading || !context} className="modal-submit-btn modal-submit-btn--danger">
+              {loading ? 'Registrando...' : 'Registrar'}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export const Sidebar = ({ activePage, onNavigate, onLogout, open, onClose }) => {
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [cigaretteModalOpen, setCigaretteModalOpen] = React.useState(false);
 
   const handleNavigate = (page) => {
     onNavigate(page);
@@ -136,6 +226,7 @@ export const Sidebar = ({ activePage, onNavigate, onLogout, open, onClose }) => 
         </div>
         <div className="sidebar__cta">
           <LogCravingButton onClick={() => setModalOpen(true)} />
+          <LogCigaretteButton onClick={() => setCigaretteModalOpen(true)} />
         </div>
         <nav className="sidebar__nav">
           {NAV_ITEMS.map(item => {
@@ -167,6 +258,7 @@ export const Sidebar = ({ activePage, onNavigate, onLogout, open, onClose }) => 
         </div>
       </aside>
       <CravingLogModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <CigaretteLogModal open={cigaretteModalOpen} onClose={() => setCigaretteModalOpen(false)} />
     </>
   );
 };
