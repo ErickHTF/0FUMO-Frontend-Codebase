@@ -77,7 +77,8 @@ export const Events = {
   stats: () => apiFetch('/events/stats'),
 
   /** Insight 1 — Mapa de calor: [{ hour, dayOfWeek, context, count, avgIntensity }] */
-  heatmap: () => apiFetch('/events/heatmap'),
+  heatmap: (year, month) =>
+    apiFetch('/events/heatmap' + (year && month ? `?year=${year}&month=${month}` : '')),
 
   /** Insight 3 — Correlação recaídas: { cravingContextPercentages, relapseContextPercentages, highRiskContexts, totalRelapses, totalCravings } */
   relapseCorrelation: () => apiFetch('/events/relapse-correlation'),

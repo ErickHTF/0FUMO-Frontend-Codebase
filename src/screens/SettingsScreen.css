@@ -375,6 +375,23 @@ html.dark .quit-date-input::-webkit-calendar-picker-indicator {
   filter: invert(0.7);
 }
 
+.timezone-select {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-border-input);
+  background: var(--color-input-bg);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  margin-top: 8px;
+}
+
+.timezone-select:focus { border-color: var(--color-primary); }
+
 .quit-date-save-btn {
   padding: 9px 20px;
   border-radius: 8px;

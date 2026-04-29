@@ -13,6 +13,25 @@ const Toggle = ({ checked, onChange }) => (
   </button>
 );
 
+const TIMEZONES = [
+  { value: 'America/Sao_Paulo',   label: 'Brasília (UTC−3)' },
+  { value: 'America/Fortaleza',   label: 'Fortaleza (UTC−3)' },
+  { value: 'America/Recife',      label: 'Recife (UTC−3)' },
+  { value: 'America/Belem',       label: 'Belém (UTC−3)' },
+  { value: 'America/Manaus',      label: 'Manaus (UTC−4)' },
+  { value: 'America/Cuiaba',      label: 'Cuiabá (UTC−4)' },
+  { value: 'America/Porto_Velho', label: 'Porto Velho (UTC−4)' },
+  { value: 'America/Boa_Vista',   label: 'Boa Vista (UTC−4)' },
+  { value: 'America/Rio_Branco',  label: 'Rio Branco (UTC−5)' },
+  { value: 'America/Noronha',     label: 'Fernando de Noronha (UTC−2)' },
+  { value: 'UTC',                 label: 'UTC (UTC+0)' },
+  { value: 'Europe/Lisbon',       label: 'Lisboa (UTC+0/+1)' },
+  { value: 'Europe/London',       label: 'Londres (UTC+0/+1)' },
+  { value: 'Europe/Berlin',       label: 'Berlim (UTC+1/+2)' },
+  { value: 'America/New_York',    label: 'Nova York (UTC−5/−4)' },
+  { value: 'America/Los_Angeles', label: 'Los Angeles (UTC−8/−7)' },
+];
+
 function toDateInput(isoString) {
   if (!isoString) return '';
   return isoString.slice(0, 10); // "2024-01-15T..." → "2024-01-15"
@@ -32,6 +51,15 @@ export const SettingsScreen = ({ user, onDeleteAccount, onUserUpdate }) => {
   ]);
 
   // Quit date state
+  const [timezone, setTimezone] = React.useState(
+    () => localStorage.getItem('0fumo_timezone') || 'America/Sao_Paulo'
+  );
+
+  const handleTimezoneChange = (tz) => {
+    setTimezone(tz);
+    localStorage.setItem('0fumo_timezone', tz);
+  };
+
   const [quitDate, setQuitDate] = React.useState(() => toDateInput(user?.quitDate));
   const [quitDateSaving, setQuitDateSaving] = React.useState(false);
   const [quitDateMsg, setQuitDateMsg] = React.useState('');
@@ -215,6 +243,23 @@ export const SettingsScreen = ({ user, onDeleteAccount, onUserUpdate }) => {
                   {quitDateMsg}
                 </p>
               )}
+            </Card>
+
+            {/* Fuso horário */}
+            <Card className="card--mb-24">
+              <h3 className="account__section-title">Fuso Horário</h3>
+              <p className="account__data-desc">
+                Usado para calcular os horários do Mapa de Vulnerabilidade e outros insights.
+              </p>
+              <select
+                value={timezone}
+                onChange={e => handleTimezoneChange(e.target.value)}
+                className="timezone-select"
+              >
+                {TIMEZONES.map(tz => (
+                  <option key={tz.value} value={tz.value}>{tz.label}</option>
+                ))}
+              </select>
             </Card>
 
             {/* Ações */}
