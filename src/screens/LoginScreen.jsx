@@ -52,7 +52,6 @@ export const LoginScreen = ({ onSuccess, onBack, isDarkMode, onToggleDarkMode })
   return (
     <div className="login">
 
-      {/* ── Painel esquerdo ──────────────────────────── */}
       <div className="login__left">
         <div className="login__left-bg-circle login__left-bg-circle--1" />
         <div className="login__left-bg-circle login__left-bg-circle--2" />
@@ -88,11 +87,9 @@ export const LoginScreen = ({ onSuccess, onBack, isDarkMode, onToggleDarkMode })
         </div>
       </div>
 
-      {/* ── Painel direito ───────────────────────────── */}
       <div className="login__right">
         <div className="login__form-wrap">
 
-          {/* Topbar */}
           <div className="login__form-topbar">
             <button onClick={onBack} className="login__back">
               <Icon name="ArrowLeft" size={15} color="var(--color-text-secondary)" />
@@ -103,13 +100,11 @@ export const LoginScreen = ({ onSuccess, onBack, isDarkMode, onToggleDarkMode })
             </button>
           </div>
 
-          {/* Header */}
           <div className="login__form-header">
             <h2 className="login__form-title">Entre na sua conta</h2>
             <p className="login__form-sub">Continue de onde parou.</p>
           </div>
 
-          {/* Social */}
           <div className="login__social">
             <button type="button" className="login__social-btn">
               <GoogleIcon />
@@ -121,7 +116,6 @@ export const LoginScreen = ({ onSuccess, onBack, isDarkMode, onToggleDarkMode })
             </button>
           </div>
 
-          {/* Divider */}
           <div className="login__divider">
             <div className="login__divider-line" />
             <span className="login__divider-text">ou</span>
@@ -129,15 +123,13 @@ export const LoginScreen = ({ onSuccess, onBack, isDarkMode, onToggleDarkMode })
           </div>
 
           {/* Error */}
-          {error && (
-            <div className="login__error">
+          { <div className="login__error">
               <Icon name="AlertCircle" size={15} color="#DC2626" />
               {error}
             </div>
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="login__form">
             <div className="login__field">
               <label className="login__label">E-mail</label>
               <input

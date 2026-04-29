@@ -10,11 +10,9 @@ export function saveSession(data) {
 }
 
 export function clearSession() {
-  // Keys atuais
   localStorage.removeItem('0fumo_token');
   localStorage.removeItem('0fumo_user');
   localStorage.removeItem('0fumo_onboarding_data');
-  // Keys legadas (versão antiga sem React Router)
   localStorage.removeItem('0fumo_onboarded');
   localStorage.removeItem('0fumo_activePage');
   localStorage.removeItem('0fumo_onboarding_started');
@@ -76,17 +74,22 @@ export const Events = {
 
   stats: () => apiFetch('/events/stats'),
 
-  /** Insight 1 — Mapa de calor: [{ hour, dayOfWeek, context, count, avgIntensity }] */
   heatmap: (year, month) =>
     apiFetch('/events/heatmap' + (year && month ? `?year=${year}&month=${month}` : '')),
 
-  /** Insight 3 — Correlação recaídas: { cravingContextPercentages, relapseContextPercentages, highRiskContexts, totalRelapses, totalCravings } */
   relapseCorrelation: () => apiFetch('/events/relapse-correlation'),
 
   remove: (id) => apiFetch(`/events/${id}`, { method: 'DELETE' }),
 };
 
+export const Messages = {
+  select: (payload) =>
+    apiFetch('/messages/select', { method: 'POST', body: JSON.stringify(payload) }),
+
+  feedback: (historyId, foiUtil) =>
+    apiFetch('/messages/feedback', { method: 'PATCH', body: JSON.stringify({ historyId, wasUseful: foiUtil }) }),
+};
+
 export const Insights = {
-  /** Insight 4 — Projeção financeira: { savedAmount, cigarettesAvoided, daysSmokeFreee, milestones, dailySaving } */
   financialProjection: () => apiFetch('/users/me/financial-projection'),
 };

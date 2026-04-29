@@ -1,4 +1,3 @@
-/* ── Top grid ─────────────────────────────────────────── */
 .relaxation__top-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -11,7 +10,6 @@
   .tips__grid { grid-template-columns: 1fr; }
 }
 
-/* ── Breathing card ───────────────────────────────────── */
 .breathing-card {
   background: var(--color-primary-light);
   border: 1px solid rgba(34, 151, 107, 0.15);
@@ -93,7 +91,6 @@
   text-decoration: underline;
 }
 
-/* ── Tips card ────────────────────────────────────────── */
 .tips__header {
   display: flex;
   align-items: center;

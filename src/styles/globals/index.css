@@ -114,7 +114,6 @@ input, textarea, button, select {
   }
 }
 
-/* ── Shared utilities ─────────────────────────────────── */
 .progress-bar {
   height: 6px;
   border-radius: 3px;

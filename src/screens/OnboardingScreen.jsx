@@ -3,7 +3,6 @@ import { Icon } from '../lib/icons';
 import { Card } from '../components/ui/Card';
 import './OnboardingScreen.css';
 
-// ── Data constants ─────────────────────────────────────────
 const TIMES = ['Menos de 1 ano', '1 a 5 anos', 'Mais de 5 anos'];
 
 const MOTIVOS = [

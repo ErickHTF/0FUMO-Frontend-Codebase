@@ -14,7 +14,6 @@ import { CommunityScreen } from './screens/CommunityScreen';
 import { SettingsScreen } from './screens/SettingsScreen';
 import { saveSession, clearSession, getStoredUser, getToken, Users } from './lib/api';
 
-// ── Limpa keys legadas da versão antiga (state-based routing) ─
 ['0fumo_onboarded', '0fumo_activePage', '0fumo_onboarding_started', '0fumo_signup_pending']
   .forEach(k => localStorage.removeItem(k));
 
@@ -82,7 +81,7 @@ function App() {
     if (user) {
       if (data?.cigs && data?.packCost) {
         try { handleUserUpdate(await Users.completeAssessment(Number(data.cigs), data.packCost)); localStorage.removeItem('0fumo_onboarding_data'); }
-        catch { /* não crítico */ }
+        catch { }
       }
       navigate('/');
     } else {
@@ -96,7 +95,7 @@ function App() {
     let finalUser = authData.user;
     if (saved?.cigs && saved?.packCost) {
       try { finalUser = await Users.completeAssessment(Number(saved.cigs), saved.packCost); localStorage.setItem('0fumo_user', JSON.stringify(finalUser)); }
-      catch { /* não crítico */ }
+      catch { }
     }
     setUser(finalUser);
     localStorage.removeItem('0fumo_onboarding_data');

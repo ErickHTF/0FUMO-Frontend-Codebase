@@ -1,8 +1,27 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from '../lib/icons';
 import { Card } from './ui/Card';
-import { Events } from '../lib/api';
+import { Events, Messages, getStoredUser } from '../lib/api';
 import './Shell.css';
+
+const ACTION_ICONS = {
+  breathing: 'Wind',
+  water: 'Droplet',
+  register_trigger: 'Target',
+  walking: 'MapPin',
+  celebrate: 'Star',
+};
+
+function calcDays(quitDate) {
+  if (!quitDate) return 0;
+  return Math.max(0, Math.floor((Date.now() - new Date(quitDate).getTime()) / 86400000));
+}
+
+function normalizeGatilho(g) {
+  if (!g) return null;
+  return g.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
 
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: 'LayoutDashboard' },
@@ -28,37 +47,55 @@ const LogCigaretteButton = ({ onClick }) => (
 );
 
 export const CravingLogModal = ({ open, onClose }) => {
+  const navigate = useNavigate();
   const [intensity, setIntensity] = React.useState(3);
+  const [ansiedade, setAnsiedade] = React.useState(3);
   const [trigger, setTrigger] = React.useState('');
   const [note, setNote] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [messageData, setMessageData] = React.useState(null);
   const triggers = ['Ansiedade', 'Hábito', 'Social', 'Cansaço', 'Estresse', 'Tédio'];
 
   React.useEffect(() => {
-    if (open) { setSubmitted(false); setIntensity(3); setTrigger(''); setNote(''); setError(''); }
+    if (open) {
+      setSubmitted(false); setIntensity(3); setAnsiedade(3);
+      setTrigger(''); setNote(''); setError(''); setMessageData(null);
+    }
   }, [open]);
 
   const handleRegister = async () => {
-    if (!trigger) {
-      setError('Selecione o que provocou o desejo');
-      return;
-    }
-    
+    if (!trigger) { setError('Selecione o que provocou o desejo'); return; }
     setLoading(true);
     setError('');
-    
     try {
       await Events.create('CRAVING', intensity, trigger, note, new Date().toISOString());
-      setSubmitted(true);
       window.dispatchEvent(new CustomEvent('craving-logged'));
-    } catch (err) {
+      const user = getStoredUser();
+      try {
+        const msg = await Messages.select({
+          craving: intensity * 2,
+          anxiety: ansiedade * 2,
+          trigger: normalizeGatilho(trigger),
+          daysSmokeFree: calcDays(user?.quitDate),
+          recaida: false,
+        });
+        setMessageData(msg);
+      } catch { }
+      setSubmitted(true);
+    } catch {
       setError('Erro ao registrar. Tente novamente.');
-      console.error('Erro ao registrar craving:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFeedback = async (foiUtil) => {
+    if (messageData?.historyId) {
+      try { await Messages.feedback(messageData.historyId, foiUtil); } catch { }
+    }
+    onClose();
   };
 
   if (!open) return null;
@@ -67,14 +104,24 @@ export const CravingLogModal = ({ open, onClose }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} className="modal-box">
         {submitted ? (
-          <div className="modal-success">
-            <div className="modal-success__icon">
-              <Icon name="Check" size={32} color="var(--color-primary)" />
+          messageData ? (
+            <MessageCard
+              messageData={messageData}
+              title="Registrado!"
+              onFeedback={handleFeedback}
+              onClose={onClose}
+              navigate={navigate}
+            />
+          ) : (
+            <div className="modal-success">
+              <div className="modal-success__icon">
+                <Icon name="Check" size={32} color="var(--color-primary)" />
+              </div>
+              <h3 className="modal-success__title">Registrado!</h3>
+              <p className="modal-success__text">Você reconheceu o desejo e isso é uma vitória. A fissura passa em poucos minutos.</p>
+              <button onClick={onClose} className="modal-success__close">Fechar</button>
             </div>
-            <h3 className="modal-success__title">Registrado!</h3>
-            <p className="modal-success__text">Você reconheceu o desejo e isso é uma vitória. A fissura passa em poucos minutos.</p>
-            <button onClick={onClose} className="modal-success__close">Fechar</button>
-          </div>
+          )
         ) : (
           <>
             <div className="modal-header">
@@ -86,34 +133,33 @@ export const CravingLogModal = ({ open, onClose }) => {
             <label className="modal-field-label">Intensidade do desejo</label>
             <div className="modal-intensity-row">
               {[1, 2, 3, 4, 5].map(v => (
-                <button
-                  key={v}
-                  onClick={() => setIntensity(v)}
+                <button key={v} onClick={() => setIntensity(v)}
                   className={`modal-intensity-btn ${v <= intensity ? 'modal-intensity-btn--active' : 'modal-intensity-btn--inactive'}`}
+                >{v}</button>
+              ))}
+            </div>
+            <label className="modal-field-label">Nível de ansiedade</label>
+            <div className="modal-intensity-row">
+              {[1, 2, 3, 4, 5].map(v => (
+                <button key={v} onClick={() => setAnsiedade(v)}
+                  className={`modal-intensity-btn ${v <= ansiedade ? 'modal-intensity-btn--active' : 'modal-intensity-btn--inactive'}`}
                 >{v}</button>
               ))}
             </div>
             <label className="modal-field-label">O que provocou?</label>
             <div className="modal-triggers-row">
               {triggers.map(t => (
-                <button
-                  key={t}
-                  onClick={() => setTrigger(t)}
+                <button key={t} onClick={() => setTrigger(t)}
                   className={`modal-trigger-btn ${trigger === t ? 'modal-trigger-btn--active' : 'modal-trigger-btn--inactive'}`}
                 >{t}</button>
               ))}
             </div>
             <label className="modal-field-label">Quer anotar algo? (opcional)</label>
-            <textarea
-              value={note}
-              onChange={e => setNote(e.target.value)}
-              placeholder="Como foi o momento..."
-              className="modal-textarea"
-            />
+            <textarea value={note} onChange={e => setNote(e.target.value)}
+              placeholder="Como foi o momento..." className="modal-textarea" />
             {error && (
               <div className="modal-error">
-                <Icon name="AlertCircle" size={14} color="#DC2626" />
-                {error}
+                <Icon name="AlertCircle" size={14} color="#DC2626" />{error}
               </div>
             )}
             <button onClick={handleRegister} disabled={loading || !trigger} className="modal-submit-btn">
@@ -126,16 +172,54 @@ export const CravingLogModal = ({ open, onClose }) => {
   );
 };
 
+const MessageCard = ({ messageData, title, onFeedback, onClose, navigate }) => (
+  <div className="modal-message">
+    <div className="modal-message__header">
+      <Icon name="Check" size={16} color="var(--color-primary)" />
+      <span className="modal-message__registered">{title}</span>
+    </div>
+    <p className="modal-message__text">{messageData.text}</p>
+    {messageData.nextAction && (
+      <div className="modal-message__action">
+        <Icon name={ACTION_ICONS[messageData.nextAction.type] || 'Zap'} size={16} color="var(--color-primary)" />
+        <div>
+          <span className="modal-message__action-label">Next action</span>
+          <p className="modal-message__action-desc">{messageData.nextAction.description}</p>
+          {messageData.nextAction.type === 'breathing' && (
+            <button className="modal-message__action-btn" onClick={() => { onClose(); navigate('/relaxar'); }}>
+              Breathe now →
+            </button>
+          )}
+          {messageData.nextAction.type === 'register_trigger' && (
+            <button className="modal-message__action-btn" onClick={() => { onClose(); navigate('/gatilhos'); }}>
+              View triggers →
+            </button>
+          )}
+        </div>
+      </div>
+    )}
+    <div className="modal-message__feedback">
+      <span className="modal-message__feedback-label">Isso ajudou?</span>
+      <div className="modal-message__feedback-btns">
+        <button onClick={() => onFeedback(true)} className="modal-message__feedback-btn modal-message__feedback-btn--yes">Sim</button>
+        <button onClick={() => onFeedback(false)} className="modal-message__feedback-btn modal-message__feedback-btn--no">Não agora</button>
+      </div>
+    </div>
+  </div>
+);
+
 const CigaretteLogModal = ({ open, onClose }) => {
+  const navigate = useNavigate();
   const [context, setContext] = React.useState('');
   const [note, setNote] = React.useState('');
   const [submitted, setSubmitted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [messageData, setMessageData] = React.useState(null);
   const contexts = ['Ansiedade', 'Hábito', 'Social', 'Cansaço', 'Estresse', 'Tédio'];
 
   React.useEffect(() => {
-    if (open) { setSubmitted(false); setContext(''); setNote(''); setError(''); }
+    if (open) { setSubmitted(false); setContext(''); setNote(''); setError(''); setMessageData(null); }
   }, [open]);
 
   const handleRegister = async () => {
@@ -144,13 +228,31 @@ const CigaretteLogModal = ({ open, onClose }) => {
     setError('');
     try {
       await Events.create('CIGARETTE_SMOKED', null, context, note, new Date().toISOString());
-      setSubmitted(true);
       window.dispatchEvent(new CustomEvent('craving-logged'));
+      const user = getStoredUser();
+      try {
+        const msg = await Messages.select({
+          craving: 5,
+          anxiety: 5,
+          trigger: normalizeGatilho(context),
+          daysSmokeFree: calcDays(user?.quitDate),
+          recaida: true,
+        });
+        setMessageData(msg);
+      } catch { }
+      setSubmitted(true);
     } catch {
       setError('Erro ao registrar. Tente novamente.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFeedback = async (foiUtil) => {
+    if (messageData?.historyId) {
+      try { await Messages.feedback(messageData.historyId, foiUtil); } catch { }
+    }
+    onClose();
   };
 
   if (!open) return null;
@@ -159,14 +261,24 @@ const CigaretteLogModal = ({ open, onClose }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} className="modal-box">
         {submitted ? (
-          <div className="modal-success">
-            <div className="modal-success__icon">
-              <Icon name="Check" size={32} color="var(--color-primary)" />
+          messageData ? (
+            <MessageCard
+              messageData={messageData}
+              title="Registrado."
+              onFeedback={handleFeedback}
+              onClose={onClose}
+              navigate={navigate}
+            />
+          ) : (
+            <div className="modal-success">
+              <div className="modal-success__icon">
+                <Icon name="Check" size={32} color="var(--color-primary)" />
+              </div>
+              <h3 className="modal-success__title">Registrado.</h3>
+              <p className="modal-success__text">Sem julgamentos. Cada registro é um dado que te ajuda a entender seus padrões.</p>
+              <button onClick={onClose} className="modal-success__close">Fechar</button>
             </div>
-            <h3 className="modal-success__title">Registrado.</h3>
-            <p className="modal-success__text">Sem julgamentos. Cada registro é um dado que te ajuda a entender seus padrões.</p>
-            <button onClick={onClose} className="modal-success__close">Fechar</button>
-          </div>
+          )
         ) : (
           <>
             <div className="modal-header">
@@ -178,24 +290,17 @@ const CigaretteLogModal = ({ open, onClose }) => {
             <label className="modal-field-label">Contexto</label>
             <div className="modal-triggers-row">
               {contexts.map(c => (
-                <button
-                  key={c}
-                  onClick={() => setContext(c)}
+                <button key={c} onClick={() => setContext(c)}
                   className={`modal-trigger-btn ${context === c ? 'modal-trigger-btn--active' : 'modal-trigger-btn--inactive'}`}
                 >{c}</button>
               ))}
             </div>
             <label className="modal-field-label">Observação (opcional)</label>
-            <textarea
-              value={note}
-              onChange={e => setNote(e.target.value)}
-              placeholder="O que estava acontecendo..."
-              className="modal-textarea"
-            />
+            <textarea value={note} onChange={e => setNote(e.target.value)}
+              placeholder="O que estava acontecendo..." className="modal-textarea" />
             {error && (
               <div className="modal-error">
-                <Icon name="AlertCircle" size={14} color="#DC2626" />
-                {error}
+                <Icon name="AlertCircle" size={14} color="#DC2626" />{error}
               </div>
             )}
             <button onClick={handleRegister} disabled={loading || !context} className="modal-submit-btn modal-submit-btn--danger">

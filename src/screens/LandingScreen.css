@@ -1,4 +1,3 @@
-/* ── Root ─────────────────────────────────────────────── */
 .landing {
   min-height: 100vh;
   position: relative;
@@ -56,7 +55,6 @@
   z-index: 1;
 }
 
-/* ── Header ───────────────────────────────────────────── */
 .landing__header {
   display: flex;
   align-items: center;

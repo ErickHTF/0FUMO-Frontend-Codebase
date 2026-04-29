@@ -13,7 +13,6 @@
   --color-error: #ef4444;
 }
 
-/* Dark mode colors */
 html.dark {
   --color-primary: #2daa7d;
   --color-primary-dark: #1f7d59;
@@ -120,7 +119,6 @@ input, textarea, button, select {
   }
 }
 
-/* ── Shared utilities ─────────────────────────────────── */
 .progress-bar {
   height: 6px;
   border-radius: 3px;

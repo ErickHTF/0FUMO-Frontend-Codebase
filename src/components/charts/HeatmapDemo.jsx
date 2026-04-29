@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Events, getStoredUser } from '../../lib/api';
+import { Icon } from '../../lib/icons';
 import './HeatmapDemo.css';
 
 const DAY_ORDER = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
@@ -21,7 +22,6 @@ function nudgeTime(hourStr) {
   return h === 0 ? '23h45' : `${h - 1}h45`;
 }
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
-const PERIOD_LABELS = { '00': 'Madrugada', '06': 'Manhã', '12': 'Tarde', '18': 'Noite' };
 
 function buildValueMap(apiData) {
   const map = {};
@@ -81,7 +81,7 @@ function getMonthOptions(sinceDate) {
   const now = new Date();
   const since = sinceDate ? new Date(sinceDate) : now;
   const sinceYear = since.getFullYear();
-  const sinceMonth = since.getMonth(); // 0-indexed
+  const sinceMonth = since.getMonth();
 
   for (let i = 0; i <= 120; i++) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -158,11 +158,16 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
 
   return (
     <section className="heatmap">
-      <div className="heatmap__title">Mapa de Vulnerabilidade</div>
+      <div className="heatmap__header">
+        <div className="heatmap__title">Mapa de Vulnerabilidade</div>
+        <ChipsRow />
+      </div>
 
       {peakDay && (
         <div className="heatmap__toast">
-          <span className="heatmap__toast-icon">💡</span>
+          <div className="heatmap__toast-icon">
+            <Icon name="Lightbulb2" size={18} color="#D4A350" />
+          </div>
           <p className="heatmap__toast-text">
             Pico às <span className="heatmap__badge heatmap__badge--alert">{peakHour}h</span>{' '}
             nas <span className="heatmap__badge heatmap__badge--alert">{DAY_FULL_PT[peakDay]}</span>
@@ -180,21 +185,14 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
         </div>
 
         <div className="heatmap__y-axis">
-          {HOURS.map((h, i) => {
-            const isBoundary = PERIOD_LABELS[h] !== undefined;
-            return (
-              <span
-                key={h}
-                className={[
-                  'heatmap__y-label',
-                  isBoundary ? 'heatmap__y-label--boundary' : '',
-                  i % 2 !== 0 ? 'heatmap__y-label--muted' : '',
-                ].join(' ')}
-              >
-                {isBoundary ? PERIOD_LABELS[h] : `${h}h`}
-              </span>
-            );
-          })}
+          {HOURS.map((h, i) => (
+            <span
+              key={h}
+              className={`heatmap__y-label${i % 2 !== 0 ? ' heatmap__y-label--muted' : ''}`}
+            >
+              {h}h
+            </span>
+          ))}
         </div>
 
         <div className="heatmap__grid">
@@ -204,7 +202,6 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
               const cell = map[key];
               const count = cell?.count || 0;
               const level = getLevel(count, max);
-              const isBoundary = PERIOD_LABELS[h] !== undefined;
               const isRowHl = hovered.hour === h;
               const isColHl = hovered.day === day;
               const isActive = isRowHl && isColHl;
@@ -217,7 +214,6 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
                   className={[
                     'heatmap__cell',
                     `heatmap__cell--l${level}`,
-                    isBoundary ? 'heatmap__cell--boundary-row' : '',
                     (isRowHl || isColHl) && !isActive ? 'heatmap__cell--hl' : '',
                     isActive ? 'heatmap__cell--active' : '',
                   ].join(' ')}
@@ -234,61 +230,79 @@ export const HeatmapDemo = ({ refreshKey = 0 }) => {
       </div>
 
       <div className="heatmap__legend">
-        <span className="heatmap__legend-label">Sem registro</span>
+        <span className="heatmap__legend-start">
+          <span className="heatmap__legend-label-icon heatmap__legend-label-icon--start" />
+          Sem registros
+        </span>
         <div className="heatmap__legend-scale">
           {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((l) => (
             <span key={l} className={`heatmap__legend-dot heatmap__cell--l${l}`} />
           ))}
         </div>
-        <span className="heatmap__legend-label">Alta frequência</span>
+        <span className="heatmap__legend-end">
+          <span className="heatmap__legend-label-icon heatmap__legend-label-icon--end" />
+          Alta frequência
+        </span>
       </div>
 
       <div className="heatmap__insights">
         {stats.peakHour && stats.peakHour[1] > 0 && (
           <div className="heatmap__insight-card heatmap__insight-card--alert">
-            <span className="heatmap__insight-label">Seu Ponto Crítico</span>
+            <div className="heatmap__insight-label">
+              <Icon name="AlertCircle" size={14} color="#9A6200" />
+              Seu Ponto Crítico
+            </div>
             <span className="heatmap__insight-value">
               Às {stats.peakHour[0]}h a vontade aperta. Você já lidou com isso {stats.totalCravings} {stats.totalCravings === 1 ? 'vez' : 'vezes'}.
             </span>
-            <span className="heatmap__insight-nudge">
-              Agende uma Respiração 4-7-8 para as {nudgeTime(stats.peakHour[0])}. Antecipe o gatilho.
-            </span>
+            <div className="heatmap__insight-nudge">
+              Agende uma Respiração 4-7-8 para as {nudgeTime(stats.peakHour[0])}.
+              <button className="heatmap__insight-nudge-btn">Agendar Respiração 4-7-8</button>
+            </div>
           </div>
         )}
 
         {stats.peakDay && stats.peakDay[1] > 0 && (
           <div className="heatmap__insight-card heatmap__insight-card--alert">
-            <span className="heatmap__insight-label">Onde a Vontade Aperta</span>
+            <div className="heatmap__insight-label">
+              <Icon name="BarChart3" size={14} color="#9A6200" />
+              Onde Aperta
+            </div>
             <span className="heatmap__insight-value">
               {DAY_SINGULAR_PT[stats.peakDay[0]]} exige mais de você.
             </span>
-            <span className="heatmap__insight-nudge">
-              {DAY_FULL_PT[stats.peakDay[0]].charAt(0).toUpperCase() + DAY_FULL_PT[stats.peakDay[0]].slice(1)} costumam ser pesadas. Beba mais água gelada hoje.
-            </span>
+            <div className="heatmap__insight-nudge">
+              {DAY_FULL_PT[stats.peakDay[0]].charAt(0).toUpperCase() + DAY_FULL_PT[stats.peakDay[0]].slice(1)} costumam ser pesadas.
+              <button className="heatmap__insight-nudge-btn">Agendar Lembrete</button>
+            </div>
           </div>
         )}
 
         {stats.quietHours.length > 0 ? (
           <div className="heatmap__insight-card heatmap__insight-card--good">
-            <span className="heatmap__insight-label">Seu Porto Seguro</span>
+            <div className="heatmap__insight-label">
+              <Icon name="Star" size={14} color="#22976b" />
+              Seu Porto Seguro
+            </div>
             <span className="heatmap__insight-value">
               Suas ilhas de paz: {stats.quietHours.map(h => `${h}h`).join(' · ')}.
             </span>
-            <span className="heatmap__insight-nudge">
-              Nesses momentos você está no controle. Respire fundo e recarregue.
-            </span>
+            <div className="heatmap__insight-nudge">
+              Nesses momentos você está no controle. Use-os para respiros.
+            </div>
           </div>
         ) : (
           <div className="heatmap__insight-card heatmap__insight-card--good">
-            <span className="heatmap__insight-label">Seu Porto Seguro</span>
+            <div className="heatmap__insight-label">
+              <Icon name="Star" size={14} color="#22976b" />
+              Seu Porto Seguro
+            </div>
             <span className="heatmap__insight-value">
               Continue registrando para revelar seus momentos de paz.
             </span>
           </div>
         )}
       </div>
-
-      <ChipsRow />
     </section>
   );
 };
