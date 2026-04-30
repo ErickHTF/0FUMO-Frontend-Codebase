@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
+
+:root {
+  --color-primary: #22976B;
+  --color-primary-dark: #1a6d4f;
+  --color-primary-light: #e8f5f1;
+  --color-surface: #FDFCFB;
+  --color-card: #ffffff;
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #6c727f;
+  --color-border: #eceef1;
+  --color-border-input: #E5E7EB;
+  --color-hover: #f0f1f3;
+  --color-muted: #9ca3af;
+  --color-input-bg: #ffffff;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-border-card: rgba(0, 0, 0, 0.07);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+html.dark {
+  --color-surface: #0d1117;
+  --color-card: #161b22;
+  --color-text-primary: #e6edf3;
+  --color-text-secondary: #8b949e;
+  --color-border: #30363d;
+  --color-border-input: #3d444d;
+  --color-primary-light: #0d2e1f;
+  --color-hover: #1c2128;
+  --color-muted: #6e7681;
+  --color-input-bg: #21262d;
+  --color-border-card: rgba(255, 255, 255, 0.07);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+html { scroll-behavior: smooth; }
+body { line-height: 1.6; }
+
+input, textarea, button, select { font-family: 'DM Sans', sans-serif; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--color-surface); }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+@keyframes landingFade {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.landing-fade { animation: landingFade 0.8s ease both; }
+.landing-stagger-1 { animation-delay: 0.05s; }
+.landing-stagger-2 { animation-delay: 0.15s; }
+.landing-stagger-3 { animation-delay: 0.25s; }
+
+@media (prefers-reduced-motion: reduce) { .landing-fade { animation: none; } }
+
+.progress-bar { height: 6px; border-radius: 3px; background: var(--color-border); overflow: hidden; }
+.progress-bar--spaced { margin-bottom: 12px; }
+.progress-bar__fill {
+  height: 100%; border-radius: 3px;
+  width: var(--progress-width, 0%);
+  transition: width 0.5s ease;
+  background: var(--progress-color, var(--color-primary));
+}
