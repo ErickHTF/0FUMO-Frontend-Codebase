@@ -52,3 +52,19 @@ export const Users = {
   completeAssessment: (cigsPerDay, packCostId) =>
     apiFetch('/users/me/assessment', { method: 'POST', body: JSON.stringify({ cigsPerDay, packCostId }) }),
 };
+
+export const Events = {
+  create: (eventType, intensity, context, note, occurredAt) =>
+    apiFetch('/events', { method: 'POST', body: JSON.stringify({ eventType, intensity, context, note, occurredAt }) }),
+
+  list: (type) =>
+    apiFetch('/events' + (type ? `?type=${type}` : '')),
+
+  stats: () => apiFetch('/events/stats'),
+
+  heatmap: () => apiFetch('/events/heatmap'),
+
+  relapseCorrelation: () => apiFetch('/events/relapse-correlation'),
+
+  remove: (id) => apiFetch(`/events/${id}`, { method: 'DELETE' }),
+};

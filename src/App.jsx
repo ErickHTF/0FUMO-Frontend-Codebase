@@ -1,13 +1,53 @@
 import React from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { AppShell } from './components/Shell';
 import { LandingScreen } from './screens/LandingScreen';
 import { OnboardingScreen } from './screens/OnboardingScreen';
 import { SignUpScreen } from './screens/SignUpScreen';
 import { LoginScreen } from './screens/LoginScreen';
+import { TriggersScreen } from './screens/TriggersScreen';
+import { LaboratoryScreen } from './screens/LaboratoryScreen';
 import { saveSession, clearSession, getStoredUser, getToken, Users } from './lib/api';
 
 ['0fumo_onboarded', '0fumo_activePage', '0fumo_onboarding_started', '0fumo_signup_pending']
   .forEach(k => localStorage.removeItem(k));
+
+const PATH_TO_PAGE = {
+  '/':            'dashboard',
+  '/saude':       'saude',
+  '/gatilhos':    'gatilhos',
+  '/relaxar':     'relaxar',
+  '/laboratorio': 'laboratorio',
+  '/comunidade':  'comunidade',
+  '/config':      'config',
+};
+
+function AppLayout({ user, onLogout, isDarkMode, onToggleDarkMode }) {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  return (
+    <AppShell
+      activePage={PATH_TO_PAGE[pathname] || 'dashboard'}
+      onNavigate={(page) => navigate(page === 'dashboard' ? '/' : `/${page}`)}
+      onLogout={onLogout}
+      isDarkMode={isDarkMode}
+      onToggleDarkMode={onToggleDarkMode}
+    >
+      <Outlet context={{ user, onLogout }} />
+    </AppShell>
+  );
+}
+
+function PrivateRoute() {
+  return getToken() ? <Outlet /> : <Navigate to="/landing" replace />;
+}
+
+function AssessmentGuard({ user }) {
+  if (user && user.assessmentCompleted === false) {
+    return <Navigate to="/onboarding" replace />;
+  }
+  return <Outlet />;
+}
 
 function App() {
   const navigate = useNavigate();
@@ -84,7 +124,22 @@ function App() {
       <Route path="/onboarding" element={<OnboardingScreen onComplete={handleOnboardingComplete} isDarkMode={isDarkMode} onToggleDarkMode={toggleDark} />} />
       <Route path="/register"   element={<SignUpScreen onComplete={handleSignUpComplete} onLogin={() => navigate('/login')} onboardingData={onboardingData} isDarkMode={isDarkMode} onToggleDarkMode={toggleDark} />} />
       <Route path="/login"      element={<LoginScreen onSuccess={handleLoginSuccess} onBack={() => navigate('/landing')} isDarkMode={isDarkMode} onToggleDarkMode={toggleDark} />} />
-      <Route path="*"           element={<Navigate to="/landing" replace />} />
+
+      <Route element={<PrivateRoute />}>
+        <Route element={<AssessmentGuard user={user} />}>
+          <Route element={<AppLayout user={user} onLogout={handleLogout} isDarkMode={isDarkMode} onToggleDarkMode={toggleDark} />}>
+            <Route path="/"            element={<div style={{ padding: '40px 0', color: 'var(--color-text-secondary)' }}>Dashboard em breve (próxima feature)</div>} />
+            <Route path="/saude"       element={<div style={{ padding: '40px 0', color: 'var(--color-text-secondary)' }}>Saúde em breve (próxima feature)</div>} />
+            <Route path="/gatilhos"    element={<TriggersScreen />} />
+            <Route path="/relaxar"     element={<div style={{ padding: '40px 0', color: 'var(--color-text-secondary)' }}>Relaxar em breve (próxima feature)</div>} />
+            <Route path="/laboratorio" element={<LaboratoryScreen />} />
+            <Route path="/comunidade"  element={<div style={{ padding: '40px 0', color: 'var(--color-text-secondary)' }}>Comunidade em breve (próxima feature)</div>} />
+            <Route path="/config"      element={<div style={{ padding: '40px 0', color: 'var(--color-text-secondary)' }}>Configurações em breve (próxima feature)</div>} />
+          </Route>
+        </Route>
+      </Route>
+
+      <Route path="*" element={<Navigate to={getToken() ? '/' : '/landing'} replace />} />
     </Routes>
   );
 }
