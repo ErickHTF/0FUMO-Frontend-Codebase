@@ -64,3 +64,8 @@ const Events = {
 const Progress = {
   getStats: () => apiFetch('/progress'),
 };
+
+const RelaxationResources = {
+  listAll: () => apiFetch('/relaxation-resources'),
+  getByTrigger: (trigger) => apiFetch(`/relaxation-resources?trigger=${encodeURIComponent(trigger)}`),
+};
