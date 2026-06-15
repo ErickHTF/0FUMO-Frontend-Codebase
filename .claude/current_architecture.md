@@ -120,6 +120,25 @@ EXPORTS:
 - Events.register(type, intensity, trigger, occurredAt, notes)
 - Events.list()
 - Progress.getStats() : GET /api/progress → ProgressStatsDTO
+- RelaxationResources.listAll() : GET /api/relaxation-resources
+- RelaxationResources.getByTrigger(trigger) : GET /api/relaxation-resources?trigger=X
+================================================
+
+================================================
+ESTADO ATUAL DO COMPONENTE: eventos.html
+Última Atualização: 2026-06-15
+
+SEÇÕES:
+- Formulário de registro de evento (tipo, intensidade, gatilho, data/hora, notas)
+- Card de sugestões de relaxamento (oculto por padrão; exibido após registro bem-sucedido)
+  - Chama RelaxationResources.getByTrigger(trigger) com o gatilho do evento registrado
+  - Exibe lista de recursos com ícone, título, descrição e categoria
+- Histórico de eventos (carregado ao abrir a página e após cada registro)
+
+CHAMADAS API:
+- Events.register(type, intensity, trigger, occurredAt, notes) : POST /api/events
+- Events.list() : GET /api/events
+- RelaxationResources.getByTrigger(trigger) : GET /api/relaxation-resources?trigger=X
 ================================================
 
 ================================================
